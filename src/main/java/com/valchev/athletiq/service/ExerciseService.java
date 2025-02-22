@@ -30,4 +30,12 @@ public class ExerciseService {
     public void deleteById(UUID exerciseId) {
         exerciseRepository.deleteById(exerciseId);
     }
+
+    public List<Exercise> getExercisesByIds(List<UUID> exerciseIds) {
+        return exerciseIds.stream()
+                .map(exerciseRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+    }
 }
