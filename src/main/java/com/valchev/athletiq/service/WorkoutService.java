@@ -1,31 +1,45 @@
 package com.valchev.athletiq.service;
 
+import com.valchev.athletiq.domain.dto.WorkoutDTO;
+import com.valchev.athletiq.domain.entity.Workout;
+import com.valchev.athletiq.domain.mapper.WorkoutMapper;
+import com.valchev.athletiq.repository.WorkoutRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.valchev.athletiq.domain.entity.Workout;
-import com.valchev.athletiq.repository.WorkoutRepository;
 
 @Service
 public class WorkoutService {
 
+    private final WorkoutRepository workoutRepository;
+    private final WorkoutMapper workoutMapper;
+    private final ExerciseService exerciseService;
+
     @Autowired
-    private WorkoutRepository workoutRepository;
-
-    public List<Workout> findAll() {
-        return workoutRepository.findAll();
+    public WorkoutService(WorkoutRepository workoutRepository, WorkoutMapper workoutMapper, ExerciseService exerciseService) {
+        this.workoutRepository = workoutRepository;
+        this.workoutMapper = workoutMapper;
+        this.exerciseService = exerciseService;
     }
 
-    public Optional<Workout> findById(UUID workoutId) {
-        return workoutRepository.findById(workoutId);
+    public List<WorkoutDTO> findAll() {
+        List<Workout> workouts = workoutRepository.findAll();
+        return workoutMapper.toDTOs(workouts);
     }
 
-    public Workout save(Workout workout) {
-        return workoutRepository.save(workout);
+    public Optional<WorkoutDTO> findById(UUID workoutId) {
+        return workoutRepository.findById(workoutId)
+                .map(workoutMapper::toDTO);
+    }
+
+    public WorkoutDTO save(WorkoutDTO workoutDTO) {
+        Workout workout = workoutMapper.toEntity(workoutDTO, exerciseService);
+        Workout savedWorkout = workoutRepository.save(workout);
+        return workoutMapper.toDTO(savedWorkout);
     }
 
     public void deleteById(UUID workoutId) {
@@ -33,3 +47,4 @@ public class WorkoutService {
     }
 
 }
+

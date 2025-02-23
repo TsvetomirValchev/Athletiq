@@ -1,5 +1,10 @@
 package com.valchev.athletiq.controller;
 
+import com.valchev.athletiq.domain.dto.WorkoutDTO;
+import com.valchev.athletiq.service.WorkoutService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,25 +26,28 @@ import com.valchev.athletiq.service.WorkoutService;
 @RequestMapping("/workouts")
 public class WorkoutController {
 
+    private final WorkoutService workoutService;
+
     @Autowired
-    private WorkoutService workoutService;
+    public WorkoutController(WorkoutService workoutService) {
+        this.workoutService = workoutService;
+    }
 
     @GetMapping
-    public List<Workout> getAllWorkouts() {
+    public List<WorkoutDTO> getAllWorkouts() {
         return workoutService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Workout> getWorkoutById(@PathVariable UUID id) {
-        Optional<Workout> workout = workoutService.findById(id);
-        return workout.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound()
-                        .build());
+    public ResponseEntity<WorkoutDTO> getWorkoutById(@PathVariable UUID id) {
+        Optional<WorkoutDTO> workoutDTO = workoutService.findById(id);
+        return workoutDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Workout createWorkout(@RequestBody Workout workout) {
-        return workoutService.save(workout);
+    public WorkoutDTO createWorkout(@RequestBody WorkoutDTO workoutDTO) {
+        return workoutService.save(workoutDTO);
     }
 
     @DeleteMapping("/{id}")
