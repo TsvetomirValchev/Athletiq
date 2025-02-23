@@ -1,5 +1,7 @@
 package com.valchev.athletiq.domain.mapper;
 
+import com.valchev.athletiq.domain.dto.ExerciseDTO;
+import com.valchev.athletiq.domain.entity.Exercise;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -16,8 +18,8 @@ public interface ExerciseMapper {
     ExerciseDTO toDTO(Exercise exercise);
 
     @Mapping(target = "exerciseId", ignore = true)
+    @Mapping(target = "workout", ignore = true)
     Exercise toEntity(ExerciseDTO exerciseDTO);
 
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);
-
 }

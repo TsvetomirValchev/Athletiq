@@ -7,8 +7,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
+import com.valchev.athletiq.domain.entity.Workout;
+import com.valchev.athletiq.domain.mapper.ExerciseMapper;
 import com.valchev.athletiq.repository.ExerciseRepository;
+import com.valchev.athletiq.repository.WorkoutRepository;
 
 @Service
 public class ExerciseService {
@@ -16,16 +20,31 @@ public class ExerciseService {
     @Autowired
     private ExerciseRepository exerciseRepository;
 
-    public List<Exercise> findAll() {
-        return exerciseRepository.findAll();
+    @Autowired
+    private WorkoutRepository workoutRepository;
+
+    @Autowired
+    private ExerciseMapper exerciseMapper;
+
+    public List<ExerciseDTO> findAll() {
+        List<Exercise> exercises = exerciseRepository.findAll();
+        return exerciseMapper.toDTOs(exercises);
     }
 
-    public Optional<Exercise> findById(UUID exerciseId) {
-        return exerciseRepository.findById(exerciseId);
+    public Optional<ExerciseDTO> findById(UUID exerciseId) {
+        return exerciseRepository.findById(exerciseId).map(exerciseMapper::toDTO);
     }
 
-    public Exercise save(Exercise exercise) {
-        return exerciseRepository.save(exercise);
+    public ExerciseDTO save(ExerciseDTO exerciseDTO) {
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
+
+        if (exerciseDTO.getWorkoutId() != null) {
+            Optional<Workout> workout = workoutRepository.findById(exerciseDTO.getWorkoutId());
+            workout.ifPresent(exercise::setWorkout);
+        }
+
+        Exercise savedExercise = exerciseRepository.save(exercise);
+        return exerciseMapper.toDTO(savedExercise);
     }
 
     public void deleteById(UUID exerciseId) {

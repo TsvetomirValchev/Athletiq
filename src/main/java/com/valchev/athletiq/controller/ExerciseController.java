@@ -6,15 +6,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.valchev.athletiq.domain.entity.Exercise;
+import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.service.ExerciseService;
 
 @RestController
@@ -25,28 +19,26 @@ public class ExerciseController {
     private ExerciseService exerciseService;
 
     @GetMapping
-    public List<Exercise> getAllExercises() {
+    public List<ExerciseDTO> getAllExercises() {
         return exerciseService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Exercise> getExerciseById(@PathVariable UUID id) {
-        Optional<Exercise> exercise = exerciseService.findById(id);
-        return exercise.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound()
-                        .build());
+    public ResponseEntity<ExerciseDTO> getExerciseById(@PathVariable UUID id) {
+        Optional<ExerciseDTO> exerciseDTO = exerciseService.findById(id);
+        return exerciseDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Exercise createExercise(@RequestBody Exercise exercise) {
-        return exerciseService.save(exercise);
+    public ResponseEntity<ExerciseDTO> createExercise(@RequestBody ExerciseDTO exerciseDTO) {
+        ExerciseDTO savedExercise = exerciseService.save(exerciseDTO);
+        return ResponseEntity.ok(savedExercise);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteExercise(@PathVariable UUID id) {
         exerciseService.deleteById(id);
-        return ResponseEntity.noContent()
-                .build();
+        return ResponseEntity.noContent().build();
     }
-
 }
