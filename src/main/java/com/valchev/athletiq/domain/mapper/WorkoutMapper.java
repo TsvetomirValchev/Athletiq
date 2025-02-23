@@ -1,5 +1,6 @@
 package com.valchev.athletiq.domain.mapper;
 
+import com.valchev.athletiq.domain.dto.ActiveWorkoutDTO;
 import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.Workout;

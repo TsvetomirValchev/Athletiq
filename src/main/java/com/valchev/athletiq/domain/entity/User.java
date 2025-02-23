@@ -1,5 +1,8 @@
 package com.valchev.athletiq.domain.entity;
 
+import java.util.List;
+import java.util.UUID;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;

@@ -1,13 +1,14 @@
 package com.valchev.athletiq.service;
 
-import com.valchev.athletiq.domain.entity.User;
-import com.valchev.athletiq.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.valchev.athletiq.domain.entity.User;
+import com.valchev.athletiq.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -30,4 +31,5 @@ public class UserService {
     public void deleteById(UUID userId) {
         userRepository.deleteById(userId);
     }
+
 }

@@ -17,7 +17,7 @@ public class WorkoutService {
 
     private final WorkoutRepository workoutRepository;
     private final WorkoutMapper workoutMapper;
-    private final ExerciseService exerciseService; // ✅ Inject ExerciseService
+    private final ExerciseService exerciseService;
 
     @Autowired
     public WorkoutService(WorkoutRepository workoutRepository, WorkoutMapper workoutMapper, ExerciseService exerciseService) {
@@ -45,5 +45,6 @@ public class WorkoutService {
     public void deleteById(UUID workoutId) {
         workoutRepository.deleteById(workoutId);
     }
+
 }
 
