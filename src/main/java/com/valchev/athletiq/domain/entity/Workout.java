@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -27,8 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 public class Workout {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID workoutId;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
     @ManyToOne

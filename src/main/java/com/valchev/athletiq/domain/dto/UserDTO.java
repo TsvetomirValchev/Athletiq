@@ -11,8 +11,10 @@ import java.util.UUID;
 @Builder
 public class UserDTO {
 
+    private UUID userId;
     private String email;
     private String username;
     private String password;
     private List<UUID> savedWorkoutIds;
+
 }

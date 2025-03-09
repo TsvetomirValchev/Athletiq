@@ -15,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class WorkoutDTO {
 
+    private UUID workoutId;
     private String name;
     private UUID userId;
     private List<UUID> exerciseIds;
