@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: athletiq
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/athletiq
+    driver-class-name: org.postgresql.Driver
+    username: athletiq_user
+    password: athletiq_password
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+rsa:
+  private-key: "classpath:/certs/private.pem"
+  public-key: "classpath:/certs/public.pem"
+
+# Server Port
+server:
+  port: 6969
