@@ -11,8 +11,20 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: athletiq50@gmail.com
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 rsa:
   private-key: "classpath:/certs/private.pem"

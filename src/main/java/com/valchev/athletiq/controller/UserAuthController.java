@@ -1,9 +1,17 @@
 package com.valchev.athletiq.controller;
 
+import com.valchev.athletiq.domain.dto.ForgottenPasswordDTO;
 import com.valchev.athletiq.domain.dto.LoginRequestDTO;
+import com.valchev.athletiq.domain.dto.RegistrationResponseDTO;
+import com.valchev.athletiq.domain.dto.ResetPasswordDTO;
 import com.valchev.athletiq.domain.dto.UserDTO;
+import com.valchev.athletiq.domain.exception.AccessDeniedException;
+import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.security.JwtTokenService;
+import com.valchev.athletiq.security.PasswordResetService;
+import com.valchev.athletiq.service.EmailService;
 import com.valchev.athletiq.service.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,14 +24,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -35,52 +45,118 @@ public class UserAuthController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
+    private final PasswordResetService passwordResetService;
+    private final EmailService emailService;
 
     @Autowired
     public UserAuthController(AuthenticationManager authenticationManager, UserService userService,
-                              PasswordEncoder passwordEncoder, JwtTokenService jwtTokenService) {
+                              PasswordEncoder passwordEncoder, JwtTokenService jwtTokenService, PasswordResetService passwordResetService, EmailService emailService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenService = jwtTokenService;
+        this.passwordResetService = passwordResetService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+    public ResponseEntity<String> login(
+            @RequestBody LoginRequestDTO request,
+            @RequestHeader(value = "X-Client-Type", defaultValue = "web") String clientType) {
 
-        String jwt = jwtTokenService.generateToken(authentication);
+
+        String username = resolveUsername(request.getUsernameOrEmail());
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, request.getPassword()));
+
+        String jwt = generateToken(authentication, clientType);
+
         return ResponseEntity.ok(jwt);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
-        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        userService.save(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    private String resolveUsername(String usernameOrEmail) {
+        if (userService.isEmail(usernameOrEmail)) {
+            log.info("Resolving email to username: {}", usernameOrEmail);
+            return userService.findUsernameByEmail(usernameOrEmail);
+        }
+        return usernameOrEmail;
+    }
+
+    private String generateToken(Authentication authentication, String clientType) {
+        return clientType.equalsIgnoreCase("mobile") ?
+                jwtTokenService.generateMobileToken(authentication) :
+                jwtTokenService.generateToken(authentication);
     }
 
     @GetMapping("/validate-token")
-    public ResponseEntity<?> validateToken(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(Map.of(
-                "valid", true,
-                "username", userDetails.getUsername()
-        ));
+    public ResponseEntity<?> validateToken(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestHeader(value = "X-Client-Type") String clientType) {
+
+        boolean isMobile = clientType.equalsIgnoreCase("mobile");
+        Map<String, Object> response = new HashMap<>();
+        response.put("valid", true);
+        response.put("username", userDetails.getUsername());
+
+        if (isMobile) {
+            String newToken = jwtTokenService.generateTokenForUser(userDetails.getUsername(), true);
+            response.put("token", newToken);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<RegistrationResponseDTO> register(@RequestBody UserDTO userDTO) {
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        UserDTO savedUser = userService.save(userDTO);
+
+        RegistrationResponseDTO responseDTO = RegistrationResponseDTO.builder()
+                .userId(savedUser.getUserId())
+                .username(savedUser.getUsername())
+                .email(savedUser.getEmail())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request) {
+        String email = request.getEmail();
+
+        userService.findByEmail(email).ifPresent(user -> {
+            String token = passwordResetService.createToken(user);
+            emailService.sendPasswordResetEmail(user.getEmail(), token);
+        });
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordDTO request) {
+        UserDTO user = passwordResetService.validateToken(request.getToken());
+        String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+        userService.updatePassword(user.getUserId(), encodedPassword);
+        passwordResetService.invalidateToken(request.getToken());
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") String id,
-                                             @AuthenticationPrincipal UserDetails currentUser) {
-        UUID userId = UUID.fromString(id);
-        Optional<UserDTO> optionalUserDTO = userService.getById(userId);
-        if (optionalUserDTO.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        UserDTO userDTO = optionalUserDTO.get();
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id,
+                                           @AuthenticationPrincipal UserDetails currentUser) {
+        UUID userId;
+        userId = UUID.fromString(id);
+
+
+        UserDTO userDTO = userService.getById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         if (!userDTO.getUsername().equals(currentUser.getUsername())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only delete your own account");
+            throw new AccessDeniedException("You can only delete your own account");
         }
+
         userService.deleteById(userId);
         return ResponseEntity.noContent().build();
     }
