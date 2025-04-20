@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ForgottenPasswordDTO {
     @NotBlank(message = "Email is required")
-    @Email(message = "Valid email is required")
+    @Email(message = "Please provide a valid email address")
     private String email;
 }

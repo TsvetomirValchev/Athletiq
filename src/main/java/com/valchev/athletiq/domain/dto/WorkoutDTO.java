@@ -16,8 +16,11 @@ import java.util.UUID;
 public class WorkoutDTO {
 
     private UUID workoutId;
+
     private String name;
+
     private UUID userId;
+
     private List<UUID> exerciseIds;
 
 }

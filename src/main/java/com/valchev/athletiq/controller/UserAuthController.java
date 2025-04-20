@@ -108,7 +108,7 @@ public class UserAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegistrationResponseDTO> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<RegistrationResponseDTO> register(@Valid @RequestBody UserDTO userDTO) {
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         UserDTO savedUser = userService.save(userDTO);
