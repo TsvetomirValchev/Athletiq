@@ -46,5 +46,9 @@ public class WorkoutService {
         workoutRepository.deleteById(workoutId);
     }
 
+    public boolean existsById(UUID id) {
+        return workoutRepository.existsById(id);
+    }
+
 }
 

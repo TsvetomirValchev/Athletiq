@@ -50,6 +50,21 @@ public class WorkoutController {
         return workoutService.save(workoutDTO);
     }
 
+
+    @PutMapping("/{id}")
+    public ResponseEntity<WorkoutDTO> updateWorkout(
+            @PathVariable UUID id,
+            @RequestBody WorkoutDTO workoutDTO) {
+
+        if (!workoutService.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        workoutDTO.setWorkoutId(id);
+        WorkoutDTO updatedWorkout = workoutService.save(workoutDTO);
+        return ResponseEntity.ok(updatedWorkout);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkout(@PathVariable UUID id) {
         workoutService.deleteById(id);

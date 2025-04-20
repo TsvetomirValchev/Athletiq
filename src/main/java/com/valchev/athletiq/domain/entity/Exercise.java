@@ -7,6 +7,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,10 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 public class Exercise {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID exerciseId;
+
+    @Column(unique = true, nullable = false)
     private String name;
+
     private double weight;
+
     private int sets;
+
     private int reps;
 
     @ManyToOne

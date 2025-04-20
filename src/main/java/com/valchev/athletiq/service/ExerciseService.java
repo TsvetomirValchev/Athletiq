@@ -17,14 +17,16 @@ import com.valchev.athletiq.repository.WorkoutRepository;
 @Service
 public class ExerciseService {
 
-    @Autowired
-    private ExerciseRepository exerciseRepository;
+    private final ExerciseRepository exerciseRepository;
+    private final WorkoutRepository workoutRepository;
+    private final ExerciseMapper exerciseMapper;
 
     @Autowired
-    private WorkoutRepository workoutRepository;
-
-    @Autowired
-    private ExerciseMapper exerciseMapper;
+    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper) {
+        this.exerciseRepository = exerciseRepository;
+        this.workoutRepository = workoutRepository;
+        this.exerciseMapper = exerciseMapper;
+    }
 
     public List<ExerciseDTO> findAll() {
         List<Exercise> exercises = exerciseRepository.findAll();

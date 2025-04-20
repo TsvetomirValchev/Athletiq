@@ -11,10 +11,12 @@ import java.util.UUID;
 @Builder
 public class ExerciseDTO {
 
+    private UUID exerciseId;
     private String name;
     private double weight;
     private int sets;
     private UUID workoutId;
     private int reps;
     private Map<Double, Integer> highestVolume;
+
 }

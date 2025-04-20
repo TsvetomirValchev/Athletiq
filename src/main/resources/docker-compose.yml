@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  athletiq_db:
+    image: postgres:latest
+    container_name: athletiq_postgres
+    environment:
+      POSTGRES_DB: athletiq
+      POSTGRES_USER: athletiq_user
+      POSTGRES_PASSWORD: athletiq_password
+    ports:
+      - "5432:5432"
+    restart: always
