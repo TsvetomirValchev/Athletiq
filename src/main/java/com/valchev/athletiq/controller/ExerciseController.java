@@ -41,4 +41,13 @@ public class ExerciseController {
         exerciseService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/exercises/{exerciseId}/sets/{orderPosition}")
+    public ResponseEntity<Void> removeSetFromExercise(
+            @PathVariable UUID exerciseId,
+            @PathVariable Integer orderPosition) {
+
+        exerciseService.removeSetByOrderPosition(exerciseId, orderPosition);
+        return ResponseEntity.noContent().build();
+    }
 }

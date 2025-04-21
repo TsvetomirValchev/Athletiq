@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.valchev.athletiq.domain.entity.ExerciseSet;
+import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,28 @@ public class ExerciseService {
 
         Exercise savedExercise = exerciseRepository.save(exercise);
         return exerciseMapper.toDTO(savedExercise);
+    }
+
+    public void removeSetByOrderPosition(UUID exerciseId, Integer orderPosition) {
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+
+        // Find the set with the given position
+        ExerciseSet setToRemove = exercise.getSets().stream()
+                .filter(s -> s.getOrderPosition().equals(orderPosition))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Set not found"));
+
+        // Remove the set
+        exercise.removeSet(setToRemove);
+
+        // Renumber remaining sets
+        int newPosition = 1;
+        for (ExerciseSet set : exercise.getSets()) {
+            set.setOrderPosition(newPosition++);
+        }
+
+        exerciseRepository.save(exercise);
     }
 
     public void deleteById(UUID exerciseId) {
