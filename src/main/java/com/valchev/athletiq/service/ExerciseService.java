@@ -1,20 +1,19 @@
 package com.valchev.athletiq.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import com.valchev.athletiq.domain.entity.ExerciseSet;
-import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
+import com.valchev.athletiq.domain.entity.ExerciseSet;
 import com.valchev.athletiq.domain.entity.Workout;
+import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.domain.mapper.ExerciseMapper;
 import com.valchev.athletiq.repository.ExerciseRepository;
 import com.valchev.athletiq.repository.WorkoutRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ExerciseService {
@@ -84,5 +83,11 @@ public class ExerciseService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+    }
+
+    public Exercise findEntityById(UUID exerciseId) {
+        return findById(exerciseId)
+                .map(exerciseMapper::toEntity)
+                .orElseThrow(() -> new RuntimeException("Exercise not found"));
     }
 }

@@ -7,6 +7,7 @@ import com.valchev.athletiq.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,5 +51,18 @@ public class WorkoutService {
         return workoutRepository.existsById(id);
     }
 
+    public WorkoutDTO addExercise(UUID workoutId, UUID exerciseId) {
+        Workout workout = workoutRepository.findById(workoutId)
+                .orElseThrow(() -> new RuntimeException("Workout not found"));
+
+        if (workout.getExercises() == null) {
+            workout.setExercises(new ArrayList<>());
+        }
+
+        workout.getExercises().add(exerciseService.findEntityById(exerciseId));
+
+        Workout savedWorkout = workoutRepository.save(workout);
+        return workoutMapper.toDTO(savedWorkout);
+    }
 }
 

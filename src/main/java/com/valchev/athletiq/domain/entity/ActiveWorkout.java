@@ -1,12 +1,12 @@
 package com.valchev.athletiq.domain.entity;
 
-import java.time.OffsetDateTime;
-
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "active_workout")
