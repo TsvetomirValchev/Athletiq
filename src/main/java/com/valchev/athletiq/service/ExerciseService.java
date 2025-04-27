@@ -1,11 +1,13 @@
 package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
+import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
 import com.valchev.athletiq.domain.entity.Workout;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.domain.mapper.ExerciseMapper;
+import com.valchev.athletiq.domain.mapper.ExerciseSetMapper;
 import com.valchev.athletiq.repository.ExerciseRepository;
 import com.valchev.athletiq.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,14 @@ public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final WorkoutRepository workoutRepository;
     private final ExerciseMapper exerciseMapper;
+    private final ExerciseSetMapper exerciseSetMapper;
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper) {
+    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper) {
         this.exerciseRepository = exerciseRepository;
         this.workoutRepository = workoutRepository;
         this.exerciseMapper = exerciseMapper;
+        this.exerciseSetMapper = exerciseSetMapper;
     }
 
     public List<ExerciseDTO> findAll() {
@@ -54,16 +58,13 @@ public class ExerciseService {
         Exercise exercise = exerciseRepository.findById(exerciseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
 
-        // Find the set with the given position
         ExerciseSet setToRemove = exercise.getSets().stream()
                 .filter(s -> s.getOrderPosition().equals(orderPosition))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Set not found"));
 
-        // Remove the set
         exercise.removeSet(setToRemove);
 
-        // Renumber remaining sets
         int newPosition = 1;
         for (ExerciseSet set : exercise.getSets()) {
             set.setOrderPosition(newPosition++);
@@ -89,5 +90,32 @@ public class ExerciseService {
         return findById(exerciseId)
                 .map(exerciseMapper::toEntity)
                 .orElseThrow(() -> new RuntimeException("Exercise not found"));
+    }
+
+    public void addSetToExercise(UUID exerciseId, ExerciseSetDTO setDTO) {
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+
+        setDTO.setExerciseId(exerciseId);
+
+        ExerciseSet set = exerciseSetMapper.toEntity(setDTO);
+
+        exercise.getSets().add(set);
+
+        exerciseRepository.save(exercise);
+    }
+
+    public void completeSet(UUID exerciseId, UUID setId) {
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+
+        ExerciseSet set = exercise.getSets().stream()
+                .filter(s -> s.getExerciseSetId().equals(setId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Set not found"));
+
+        set.setCompleted(true);
+
+        exerciseRepository.save(exercise);
     }
 }

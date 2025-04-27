@@ -14,7 +14,6 @@ public class ExerciseDTO {
     private UUID workoutId;
     private UUID exerciseTemplateId;
     private String name;
-    private String description;
     private String notes;
     private List<UUID> exerciseSetIds;
     private int totalSets;

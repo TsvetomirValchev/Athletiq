@@ -16,7 +16,6 @@ public interface ExerciseMapper {
     @Mapping(source = "workout.workoutId", target = "workoutId")
     @Mapping(source = "exerciseTemplate.exerciseTemplateId", target = "exerciseTemplateId")
     @Mapping(source = "exerciseTemplate.name", target = "name")
-    @Mapping(source = "exerciseTemplate.description", target = "description")
     @Mapping(source = "sets", target = "exerciseSetIds", qualifiedByName = "mapSetIds")
     @Mapping(source = "sets", target = "totalSets", qualifiedByName = "countSets")
     @Mapping(source = "sets", target = "maxWeight", qualifiedByName = "calculateMaxWeight")

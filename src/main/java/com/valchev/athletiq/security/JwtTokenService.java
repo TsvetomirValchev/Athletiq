@@ -1,5 +1,6 @@
 package com.valchev.athletiq.security;
 
+import com.valchev.athletiq.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class JwtTokenService {
 
     private final JwtEncoder encoder;
+    private final CustomUserDetailsService userDetailsService;
 
     public String generateToken(Authentication authentication) {
         return generateToken(authentication, 1, ChronoUnit.MINUTES);
@@ -26,11 +29,11 @@ public class JwtTokenService {
         return generateToken(authentication, 30, ChronoUnit.DAYS);
     }
 
-    // For refresh: generate token for specific username
     public String generateTokenForUser(String username, boolean isMobile) {
+        AthletiqUser athletiqUser = (AthletiqUser) userDetailsService.loadUserByUsername(username);
+
         Instant now = Instant.now();
 
-        // Choose expiration based on client type
         Instant expiration = isMobile ?
                 now.plus(30, ChronoUnit.DAYS) :
                 now.plus(1, ChronoUnit.MINUTES);
@@ -40,7 +43,7 @@ public class JwtTokenService {
                 .issuedAt(now)
                 .expiresAt(expiration)
                 .subject(username)
-                .claim("scope", "ROLE_USER")
+                .claim("userId", athletiqUser.getUserId().toString())
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -53,14 +56,22 @@ public class JwtTokenService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
+        UUID userId = null;
+        if (authentication.getPrincipal() instanceof AthletiqUser) {
+            userId = ((AthletiqUser) authentication.getPrincipal()).getUserId();
+        }
+
+        JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(amount, unit))
                 .subject(authentication.getName())
-                .claim("scope", scope)
-                .build();
+                .claim("scope", scope);
 
-        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        if (userId != null) {
+            claimsBuilder.claim("userId", userId);
+        }
+
+        return this.encoder.encode(JwtEncoderParameters.from(claimsBuilder.build())).getTokenValue();
     }
 }
