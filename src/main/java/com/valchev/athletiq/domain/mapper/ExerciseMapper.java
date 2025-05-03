@@ -3,6 +3,8 @@ package com.valchev.athletiq.domain.mapper;
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
+import com.valchev.athletiq.service.ExerciseSetService;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -22,11 +24,11 @@ public interface ExerciseMapper {
     @Mapping(source = "sets", target = "totalReps", qualifiedByName = "calculateTotalReps")
     ExerciseDTO toDTO(Exercise exercise);
 
-    @Mapping(target = "exerciseId", ignore = true)
-    @Mapping(target = "workout", ignore = true)
-    @Mapping(target = "exerciseTemplate", ignore = true)
-    @Mapping(target = "sets", ignore = true)
-    Exercise toEntity(ExerciseDTO exerciseDTO);
+    @Mapping(source = "exerciseId", target = "exerciseId")
+    @Mapping(source = "workoutId", target = "workout.workoutId")
+    @Mapping(source = "exerciseTemplateId", target = "exerciseTemplate.exerciseTemplateId")
+    @Mapping(source = "exerciseSetIds", target = "sets", qualifiedByName = "mapSetIdsToSets")
+    Exercise toEntity(ExerciseDTO exerciseDTO, @Context ExerciseSetService exerciseSetService);
 
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);
 
@@ -58,4 +60,13 @@ public interface ExerciseMapper {
                 .mapToInt(ExerciseSet::getReps)
                 .sum();
     }
+
+    @Named("mapSetIdsToSets")
+    default List<ExerciseSet> mapSetIdsToSets(List<UUID> setIds, @Context ExerciseSetService exerciseSetService) {
+        if (setIds == null) {
+            return null;
+        }
+        return exerciseSetService.findAllByIds(setIds);
+    }
+
 }

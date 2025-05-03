@@ -39,12 +39,6 @@ public class Exercise {
 
     private String notes;
 
-    public void addSet(ExerciseSet set) {
-        sets.add(set);
-        set.setExercise(this);
-        set.setOrderPosition(sets.size());
-    }
-
     public void removeSet(ExerciseSet set) {
         sets.remove(set);
     }

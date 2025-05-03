@@ -24,13 +24,15 @@ public class ExerciseService {
     private final WorkoutRepository workoutRepository;
     private final ExerciseMapper exerciseMapper;
     private final ExerciseSetMapper exerciseSetMapper;
+    private final ExerciseSetService exerciseSetService;
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper) {
+    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper, ExerciseSetService exerciseSetService) {
         this.exerciseRepository = exerciseRepository;
         this.workoutRepository = workoutRepository;
         this.exerciseMapper = exerciseMapper;
         this.exerciseSetMapper = exerciseSetMapper;
+        this.exerciseSetService = exerciseSetService;
     }
 
     public List<ExerciseDTO> findAll() {
@@ -43,7 +45,7 @@ public class ExerciseService {
     }
 
     public ExerciseDTO save(ExerciseDTO exerciseDTO) {
-        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
 
         if (exerciseDTO.getWorkoutId() != null) {
             Optional<Workout> workout = workoutRepository.findById(exerciseDTO.getWorkoutId());
@@ -73,23 +75,12 @@ public class ExerciseService {
         exerciseRepository.save(exercise);
     }
 
-    public void deleteById(UUID exerciseId) {
-        exerciseRepository.deleteById(exerciseId);
-    }
-
-
     public List<Exercise> getExercisesByIds(List<UUID> exerciseIds) {
         return exerciseIds.stream()
                 .map(exerciseRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
-    }
-
-    public Exercise findEntityById(UUID exerciseId) {
-        return findById(exerciseId)
-                .map(exerciseMapper::toEntity)
-                .orElseThrow(() -> new RuntimeException("Exercise not found"));
     }
 
     public void addSetToExercise(UUID exerciseId, ExerciseSetDTO setDTO) {

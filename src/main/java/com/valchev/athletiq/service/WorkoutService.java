@@ -28,16 +28,18 @@ public class WorkoutService {
     private final ExerciseService exerciseService;
     private final ExerciseMapper exerciseMapper;
     private final ExerciseSetMapper exerciseSetMapper;
+    private final ExerciseSetService exerciseSetService;
 
     @Autowired
     public WorkoutService(WorkoutRepository workoutRepository, WorkoutMapper workoutMapper,
                           ExerciseService exerciseService, ExerciseMapper exerciseMapper,
-                          ExerciseSetMapper exerciseSetMapper) {
+                          ExerciseSetMapper exerciseSetMapper, ExerciseSetService exerciseSetService) {
         this.workoutRepository = workoutRepository;
         this.workoutMapper = workoutMapper;
         this.exerciseService = exerciseService;
         this.exerciseMapper = exerciseMapper;
         this.exerciseSetMapper = exerciseSetMapper;
+        this.exerciseSetService = exerciseSetService;
     }
 
     private static void checkIfExerciseExistsInWorkout(UUID exerciseId, Workout workout) {
@@ -79,7 +81,7 @@ public class WorkoutService {
     public WorkoutDTO addExerciseToWorkout(UUID workoutId, ExerciseDTO exerciseDTO) {
         Workout workout = retrieveWorkout(workoutId);
 
-        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
         exercise.setWorkout(workout);
 
         if (workout.getExercises() == null) {
@@ -109,7 +111,7 @@ public class WorkoutService {
         boolean exerciseUpdated = false;
         for (int i = 0; i < workout.getExercises().size(); i++) {
             if (workout.getExercises().get(i).getExerciseId().equals(exerciseDTO.getExerciseId())) {
-                Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO);
+                Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
                 updatedExercise.setWorkout(workout);
                 workout.getExercises().set(i, updatedExercise);
                 exerciseUpdated = true;
@@ -176,19 +178,6 @@ public class WorkoutService {
 
         exerciseService.addSetToExercise(exerciseId, setDTO);
 
-        Workout updatedWorkout = retrieveWorkout(workoutId);
-
-        return workoutMapper.toDTO(updatedWorkout);
-    }
-
-    public WorkoutDTO completeExerciseSet(UUID workoutId, UUID exerciseId, UUID setId) {
-        Workout workout = retrieveWorkout(workoutId);
-
-        checkIfExerciseExistsInWorkout(exerciseId, workout);
-
-        exerciseService.completeSet(exerciseId, setId);
-
-        // Re-fetch the updated workout
         Workout updatedWorkout = retrieveWorkout(workoutId);
 
         return workoutMapper.toDTO(updatedWorkout);
