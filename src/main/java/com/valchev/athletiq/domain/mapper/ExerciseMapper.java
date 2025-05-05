@@ -1,24 +1,21 @@
 package com.valchev.athletiq.domain.mapper;
 
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
+import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
-import com.valchev.athletiq.service.ExerciseSetService;
-import org.mapstruct.Context;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ExerciseSetMapper.class})
 public interface ExerciseMapper {
 
     @Mapping(source = "workout.workoutId", target = "workoutId")
     @Mapping(source = "exerciseTemplate.exerciseTemplateId", target = "exerciseTemplateId")
     @Mapping(source = "exerciseTemplate.name", target = "name")
-    @Mapping(source = "sets", target = "exerciseSetIds", qualifiedByName = "mapSetIds")
+    @Mapping(source = "sets", target = "sets")
     @Mapping(source = "sets", target = "totalSets", qualifiedByName = "countSets")
     @Mapping(source = "sets", target = "maxWeight", qualifiedByName = "calculateMaxWeight")
     @Mapping(source = "sets", target = "totalReps", qualifiedByName = "calculateTotalReps")
@@ -27,17 +24,10 @@ public interface ExerciseMapper {
     @Mapping(source = "exerciseId", target = "exerciseId")
     @Mapping(source = "workoutId", target = "workout.workoutId")
     @Mapping(source = "exerciseTemplateId", target = "exerciseTemplate.exerciseTemplateId")
-    @Mapping(source = "exerciseSetIds", target = "sets", qualifiedByName = "mapSetIdsToSets")
-    Exercise toEntity(ExerciseDTO exerciseDTO, @Context ExerciseSetService exerciseSetService);
+    @Mapping(target = "sets", ignore = true)
+    Exercise toEntity(ExerciseDTO exerciseDTO);
 
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);
-
-    @Named("mapSetIds")
-    default List<UUID> mapSetIds(List<ExerciseSet> sets) {
-        return sets != null ? sets.stream()
-                .map(ExerciseSet::getExerciseSetId)
-                .toList() : null;
-    }
 
     @Named("countSets")
     default int countSets(List<ExerciseSet> sets) {
@@ -61,12 +51,24 @@ public interface ExerciseMapper {
                 .sum();
     }
 
-    @Named("mapSetIdsToSets")
-    default List<ExerciseSet> mapSetIdsToSets(List<UUID> setIds, @Context ExerciseSetService exerciseSetService) {
-        if (setIds == null) {
-            return null;
+    @AfterMapping
+    default void mapSets(ExerciseDTO dto, @MappingTarget Exercise exercise) {
+        if (dto.getSets() != null) {
+            List<ExerciseSet> sets = dto.getSets().stream()
+                    .map(setDto -> {
+                        ExerciseSet set = new ExerciseSet();
+                        set.setExerciseSetId(setDto.getExerciseSetId());
+                        set.setOrderPosition(setDto.getOrderPosition());
+                        set.setReps(setDto.getReps());
+                        set.setWeight(setDto.getWeight());
+                        set.setRestTimeSeconds(setDto.getRestTimeSeconds());
+                        set.setType(setDto.getType());
+                        set.setCompleted(setDto.getCompleted());
+                        set.setExercise(exercise); // Set the parent reference
+                        return set;
+                    })
+                    .collect(Collectors.toList());
+            exercise.setSets(sets);
         }
-        return exerciseSetService.findAllByIds(setIds);
     }
-
 }

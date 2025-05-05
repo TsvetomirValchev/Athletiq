@@ -3,6 +3,7 @@ package com.valchev.athletiq.controller;
 import com.valchev.athletiq.domain.dto.ActiveWorkoutDTO;
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
+import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.security.AthletiqUser;
 import com.valchev.athletiq.service.ActiveWorkoutService;
 import lombok.RequiredArgsConstructor;

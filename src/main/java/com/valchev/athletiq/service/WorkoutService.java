@@ -4,6 +4,7 @@ import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
+import com.valchev.athletiq.domain.entity.ExerciseSet;
 import com.valchev.athletiq.domain.entity.Workout;
 import com.valchev.athletiq.domain.exception.AccessDeniedException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
@@ -61,6 +62,16 @@ public class WorkoutService {
                 .map(workoutMapper::toDTO);
     }
 
+    public WorkoutDTO updateWorkout(UUID workoutId, WorkoutDTO workoutDTO) {
+        Workout workout = workoutRepository.findById(workoutId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workout not found with ID: " + workoutId));
+
+        workout.setName(workoutDTO.getName());
+
+        Workout savedWorkout = workoutRepository.save(workout);
+        return workoutMapper.toDTO(savedWorkout);
+    }
+
     public WorkoutDTO save(WorkoutDTO workoutDTO) {
         Workout workout = workoutMapper.toEntity(workoutDTO, exerciseService);
         Workout savedWorkout = workoutRepository.save(workout);
@@ -78,17 +89,30 @@ public class WorkoutService {
                 .collect(Collectors.toList());
     }
 
-    public WorkoutDTO addExerciseToWorkout(UUID workoutId, ExerciseDTO exerciseDTO) {
+    public WorkoutDTO addExerciseWithSets(UUID workoutId, ExerciseDTO exerciseDTO) {
         Workout workout = retrieveWorkout(workoutId);
 
-        Exercise exercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
         exercise.setWorkout(workout);
 
-        if (workout.getExercises() == null) {
-            workout.setExercises(new ArrayList<>());
-        }
-
         workout.getExercises().add(exercise);
+        Workout savedWorkout = workoutRepository.save(workout);
+
+        return workoutMapper.toDTO(savedWorkout);
+    }
+
+    public WorkoutDTO addBatchExercisesWithSets(UUID workoutId, List<ExerciseDTO> exerciseDTOs) {
+        Workout workout = retrieveWorkout(workoutId);
+
+        List<Exercise> exercises = exerciseDTOs.stream()
+                .map(dto -> {
+                    Exercise exercise = exerciseMapper.toEntity(dto);
+                    exercise.setWorkout(workout);
+                    return exercise;
+                })
+                .toList();
+
+        workout.getExercises().addAll(exercises);
         Workout savedWorkout = workoutRepository.save(workout);
 
         return workoutMapper.toDTO(savedWorkout);
@@ -111,7 +135,7 @@ public class WorkoutService {
         boolean exerciseUpdated = false;
         for (int i = 0; i < workout.getExercises().size(); i++) {
             if (workout.getExercises().get(i).getExerciseId().equals(exerciseDTO.getExerciseId())) {
-                Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
+                Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO);
                 updatedExercise.setWorkout(workout);
                 workout.getExercises().set(i, updatedExercise);
                 exerciseUpdated = true;

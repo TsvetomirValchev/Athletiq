@@ -58,7 +58,7 @@ public class ActiveWorkoutService {
     public ActiveWorkoutDTO addExerciseToWorkout(UUID workoutId, ExerciseDTO exerciseDTO) {
         ActiveWorkout workout = retrieveActiveWorkout(workoutId);
 
-        Exercise exercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
 
         if (workout.getExercises() == null) {
             workout.setExercises(new ArrayList<>());
@@ -102,7 +102,7 @@ public class ActiveWorkoutService {
         boolean exerciseUpdated = false;
         for (int i = 0; i < workout.getExercises().size(); i++) {
             if (workout.getExercises().get(i).getExerciseId().equals(exerciseDTO.getExerciseId())) {
-                Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
+                Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO);
                 workout.getExercises().set(i, updatedExercise);
                 exerciseUpdated = true;
                 break;

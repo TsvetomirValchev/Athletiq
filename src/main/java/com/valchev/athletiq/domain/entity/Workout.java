@@ -33,7 +33,7 @@ public class Workout {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID workoutId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @ManyToOne

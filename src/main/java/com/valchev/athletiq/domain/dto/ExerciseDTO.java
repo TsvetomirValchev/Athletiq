@@ -15,7 +15,7 @@ public class ExerciseDTO {
     private UUID exerciseTemplateId;
     private String name;
     private String notes;
-    private List<UUID> exerciseSetIds;
+    private List<ExerciseSetDTO> sets;
     private int totalSets;
     private double maxWeight;
     private int totalReps;

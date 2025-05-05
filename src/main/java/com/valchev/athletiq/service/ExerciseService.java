@@ -24,7 +24,6 @@ public class ExerciseService {
     private final WorkoutRepository workoutRepository;
     private final ExerciseMapper exerciseMapper;
     private final ExerciseSetMapper exerciseSetMapper;
-    private final ExerciseSetService exerciseSetService;
 
     @Autowired
     public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper, ExerciseSetService exerciseSetService) {
@@ -32,7 +31,6 @@ public class ExerciseService {
         this.workoutRepository = workoutRepository;
         this.exerciseMapper = exerciseMapper;
         this.exerciseSetMapper = exerciseSetMapper;
-        this.exerciseSetService = exerciseSetService;
     }
 
     public List<ExerciseDTO> findAll() {
@@ -45,7 +43,7 @@ public class ExerciseService {
     }
 
     public ExerciseDTO save(ExerciseDTO exerciseDTO) {
-        Exercise exercise = exerciseMapper.toEntity(exerciseDTO, exerciseSetService);
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
 
         if (exerciseDTO.getWorkoutId() != null) {
             Optional<Workout> workout = workoutRepository.findById(exerciseDTO.getWorkoutId());
