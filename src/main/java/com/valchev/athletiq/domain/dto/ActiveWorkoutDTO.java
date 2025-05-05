@@ -1,14 +1,12 @@
-
 package com.valchev.athletiq.domain.dto;
-
-import java.time.OffsetDateTime;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

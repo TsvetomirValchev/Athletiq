@@ -66,10 +66,10 @@ public class UserService {
         return input != null && input.contains("@");
     }
 
-   public String findUsernameByEmail(String email) {
-       return findByEmail(email)
-               .map(UserDTO::getUsername)
-               .orElseThrow(() -> new NoSuchUserException("No user found with email: " + email));
-   }
+    public String findUsernameByEmail(String email) {
+        return findByEmail(email)
+                .map(UserDTO::getUsername)
+                .orElseThrow(() -> new NoSuchUserException("No user found with email: " + email));
+    }
 }
 

@@ -1,10 +1,9 @@
 package com.valchev.athletiq.domain.dto;
 
-import java.util.Map;
-
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -12,11 +11,13 @@ import java.util.UUID;
 public class ExerciseDTO {
 
     private UUID exerciseId;
-    private String name;
-    private double weight;
-    private int sets;
     private UUID workoutId;
-    private int reps;
-    private Map<Double, Integer> highestVolume;
+    private UUID exerciseTemplateId;
+    private String name;
+    private String notes;
+    private List<ExerciseSetDTO> sets;
+    private int totalSets;
+    private double maxWeight;
+    private int totalReps;
 
 }

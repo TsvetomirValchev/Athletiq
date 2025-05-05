@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -63,8 +62,6 @@ public class UserAuthController {
     public ResponseEntity<String> login(
             @RequestBody LoginRequestDTO request,
             @RequestHeader(value = "X-Client-Type", defaultValue = "web") String clientType) {
-
-
         String username = resolveUsername(request.getUsernameOrEmail());
 
         Authentication authentication = authenticationManager.authenticate(
@@ -91,8 +88,9 @@ public class UserAuthController {
 
     @GetMapping("/validate-token")
     public ResponseEntity<?> validateToken(
-            @AuthenticationPrincipal UserDetails userDetails,
+            Authentication authentication,
             @RequestHeader(value = "X-Client-Type") String clientType) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         boolean isMobile = clientType.equalsIgnoreCase("mobile");
         Map<String, Object> response = new HashMap<>();
@@ -144,11 +142,11 @@ public class UserAuthController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id,
-                                           @AuthenticationPrincipal UserDetails currentUser) {
-        UUID userId;
-        userId = UUID.fromString(id);
-
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable("id") String id,
+            Authentication authentication) {
+        UUID userId = UUID.fromString(id);
+        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
 
         UserDTO userDTO = userService.getById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

@@ -2,6 +2,7 @@ package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.entity.User;
 import com.valchev.athletiq.repository.UserRepository;
+import com.valchev.athletiq.security.AthletiqUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -22,17 +25,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.debug("Loading user by username {}", username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-        //TODO: do I need a role functionality?
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-
-        log.debug("User details loaded successfully for username: {}, Authorities: {}", username, authorities);
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        return new AthletiqUser(
+                user.getUsername(),
+                user.getPassword(),
+                authorities,
+                user.getUserId()
+        );
     }
 }
 

@@ -1,8 +1,5 @@
 package com.valchev.athletiq.domain.entity;
 
-import java.util.List;
-import java.util.UUID;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -20,6 +17,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.UUID;
+
 @Entity(name = "workout")
 @Data
 @Slf4j
@@ -33,7 +33,7 @@ public class Workout {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID workoutId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @ManyToOne
