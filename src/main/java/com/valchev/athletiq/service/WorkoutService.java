@@ -4,7 +4,6 @@ import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
-import com.valchev.athletiq.domain.entity.ExerciseSet;
 import com.valchev.athletiq.domain.entity.Workout;
 import com.valchev.athletiq.domain.exception.AccessDeniedException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
@@ -15,7 +14,6 @@ import com.valchev.athletiq.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,18 +27,16 @@ public class WorkoutService {
     private final ExerciseService exerciseService;
     private final ExerciseMapper exerciseMapper;
     private final ExerciseSetMapper exerciseSetMapper;
-    private final ExerciseSetService exerciseSetService;
 
     @Autowired
     public WorkoutService(WorkoutRepository workoutRepository, WorkoutMapper workoutMapper,
                           ExerciseService exerciseService, ExerciseMapper exerciseMapper,
-                          ExerciseSetMapper exerciseSetMapper, ExerciseSetService exerciseSetService) {
+                          ExerciseSetMapper exerciseSetMapper) {
         this.workoutRepository = workoutRepository;
         this.workoutMapper = workoutMapper;
         this.exerciseService = exerciseService;
         this.exerciseMapper = exerciseMapper;
         this.exerciseSetMapper = exerciseSetMapper;
-        this.exerciseSetService = exerciseSetService;
     }
 
     private static void checkIfExerciseExistsInWorkout(UUID exerciseId, Workout workout) {
@@ -214,7 +210,6 @@ public class WorkoutService {
 
         exerciseService.removeSetByOrderPosition(exerciseId, orderPosition);
 
-        // Re-fetch the updated workout
         Workout updatedWorkout = retrieveWorkout(workoutId);
 
         return workoutMapper.toDTO(updatedWorkout);

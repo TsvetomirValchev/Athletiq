@@ -13,9 +13,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExerciseTemplateDTO {
+
     private UUID exerciseTemplateId;
     private String name;
     private String description;
     private List<String> targetMuscleGroups;
     private String imageUrl;
+    private int orderPosition;
+
 }

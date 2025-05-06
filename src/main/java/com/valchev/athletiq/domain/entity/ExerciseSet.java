@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "exercise_set")
@@ -33,12 +34,17 @@ public class ExerciseSet {
     @Column(nullable = false)
     private Double weight;
 
+    @Column
     private Integer restTimeSeconds;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SetType type;
 
-    @Column
+    @Column(nullable = false)
     private Boolean completed = false;
+
+    @Column
+    private LocalDateTime lastModified;
+
 }

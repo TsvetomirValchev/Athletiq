@@ -1,6 +1,7 @@
 package com.valchev.athletiq.domain.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +39,9 @@ public class Exercise {
     private List<ExerciseSet> sets = new ArrayList<>();
 
     private String notes;
+
+    @Column(nullable = false)
+    private int orderPosition;
 
     public void removeSet(ExerciseSet set) {
         sets.remove(set);
