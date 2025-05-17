@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface ExerciseTemplateRepository extends JpaRepository<ExerciseTemplate, UUID> {
 
-    Optional<ExerciseTemplate> findByName(String name);
+    Optional<ExerciseTemplate> findByNameIgnoreCase(String name);
 
     @Query("SELECT e FROM ExerciseTemplate e JOIN e.targetMuscleGroups m WHERE m = :muscleGroup")
     List<ExerciseTemplate> findByTargetMuscleGroup(@Param("muscleGroup") String muscleGroup);

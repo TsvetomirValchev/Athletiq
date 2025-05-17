@@ -43,4 +43,11 @@ public class ExerciseTemplateController {
     public List<ExerciseTemplateDTO> getTemplatesByMuscleGroup(@RequestParam String muscleGroup) {
         return exerciseTemplateService.findByTargetMuscleGroup(muscleGroup);
     }
+
+    @GetMapping("/image-url")
+    public ResponseEntity<String> getImageUrlByName(@RequestParam String exerciseName) {
+        return exerciseTemplateService.findImageUrlByName(exerciseName)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

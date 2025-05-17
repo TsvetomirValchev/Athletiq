@@ -48,11 +48,6 @@ public class WorkoutService {
         }
     }
 
-    public List<WorkoutDTO> findAll() {
-        List<Workout> workouts = workoutRepository.findAll();
-        return workoutMapper.toDTOs(workouts);
-    }
-
     public Optional<WorkoutDTO> findById(UUID workoutId) {
         return workoutRepository.findById(workoutId)
                 .map(workoutMapper::toDTO);
@@ -160,14 +155,11 @@ public class WorkoutService {
         return workoutMapper.toDTO(savedWorkout);
     }
 
-
     public List<WorkoutDTO> findAllByUserId(UUID userId) {
         return workoutRepository.findByUser_UserId(userId).stream()
                 .map(workoutMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
-
 
     public void verifyOwnership(UUID workoutId, UUID userId) {
         Workout workout = workoutRepository.findById(workoutId)

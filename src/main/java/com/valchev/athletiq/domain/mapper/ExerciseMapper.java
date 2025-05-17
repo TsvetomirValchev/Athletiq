@@ -15,6 +15,7 @@ public interface ExerciseMapper {
     @Mapping(source = "workout.workoutId", target = "workoutId")
     @Mapping(source = "exerciseTemplate.exerciseTemplateId", target = "exerciseTemplateId")
     @Mapping(source = "exerciseTemplate.name", target = "name")
+    @Mapping(target = "orderPosition", source = "orderPosition")
     @Mapping(source = "sets", target = "sets")
     @Mapping(source = "sets", target = "totalSets", qualifiedByName = "countSets")
     @Mapping(source = "sets", target = "maxWeight", qualifiedByName = "calculateMaxWeight")
@@ -25,6 +26,7 @@ public interface ExerciseMapper {
     @Mapping(source = "workoutId", target = "workout.workoutId")
     @Mapping(source = "exerciseTemplateId", target = "exerciseTemplate.exerciseTemplateId")
     @Mapping(target = "sets", ignore = true)
+    @Mapping(target = "orderPosition", source = "orderPosition")
     Exercise toEntity(ExerciseDTO exerciseDTO);
 
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);

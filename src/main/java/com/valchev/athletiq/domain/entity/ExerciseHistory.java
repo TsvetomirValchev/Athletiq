@@ -7,44 +7,43 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Cascade;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hibernate.annotations.CascadeType.ALL;
 
-@Entity(name = "exercise")
+@Entity
+@Table(name = "exercise_history")
 @Data
-@Slf4j
-public class Exercise {
-
+@AllArgsConstructor
+@NoArgsConstructor
+public class ExerciseHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID exerciseId;
+    private UUID exerciseHistoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Workout workout;
+    @JoinColumn(name = "workout_history_id")
+    private WorkoutHistory workoutHistory;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private ExerciseTemplate exerciseTemplate;
-
-    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cascade(ALL)
-    private List<ExerciseSet> sets = new ArrayList<>();
-
-    private String notes;
+    @Column
+    private String exerciseName;
 
     @Column(nullable = false)
     private int orderPosition;
 
-    public void removeSet(ExerciseSet set) {
-        sets.remove(set);
-    }
+    @Column
+    private String notes;
+
+    @OneToMany(mappedBy = "exerciseHistory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExerciseSetHistory> exerciseSetHistories = new ArrayList<>();
 
 }

@@ -21,37 +21,12 @@ import java.util.UUID;
 public class ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
-    private final WorkoutRepository workoutRepository;
-    private final ExerciseMapper exerciseMapper;
     private final ExerciseSetMapper exerciseSetMapper;
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper, ExerciseSetService exerciseSetService) {
+    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseSetMapper exerciseSetMapper) {
         this.exerciseRepository = exerciseRepository;
-        this.workoutRepository = workoutRepository;
-        this.exerciseMapper = exerciseMapper;
         this.exerciseSetMapper = exerciseSetMapper;
-    }
-
-    public List<ExerciseDTO> findAll() {
-        List<Exercise> exercises = exerciseRepository.findAll();
-        return exerciseMapper.toDTOs(exercises);
-    }
-
-    public Optional<ExerciseDTO> findById(UUID exerciseId) {
-        return exerciseRepository.findById(exerciseId).map(exerciseMapper::toDTO);
-    }
-
-    public ExerciseDTO save(ExerciseDTO exerciseDTO) {
-        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
-
-        if (exerciseDTO.getWorkoutId() != null) {
-            Optional<Workout> workout = workoutRepository.findById(exerciseDTO.getWorkoutId());
-            workout.ifPresent(exercise::setWorkout);
-        }
-
-        Exercise savedExercise = exerciseRepository.save(exercise);
-        return exerciseMapper.toDTO(savedExercise);
     }
 
     public void removeSetByOrderPosition(UUID exerciseId, Integer orderPosition) {
@@ -90,20 +65,6 @@ public class ExerciseService {
         ExerciseSet set = exerciseSetMapper.toEntity(setDTO);
 
         exercise.getSets().add(set);
-
-        exerciseRepository.save(exercise);
-    }
-
-    public void completeSet(UUID exerciseId, UUID setId) {
-        Exercise exercise = exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
-
-        ExerciseSet set = exercise.getSets().stream()
-                .filter(s -> s.getExerciseSetId().equals(setId))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Set not found"));
-
-        set.setCompleted(true);
 
         exerciseRepository.save(exercise);
     }

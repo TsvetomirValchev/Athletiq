@@ -1,5 +1,6 @@
 package com.valchev.athletiq.domain.dto;
 
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class ExerciseDTO {
     private String name;
     private String notes;
     private List<ExerciseSetDTO> sets;
+    private int orderPosition;
     private int totalSets;
     private double maxWeight;
     private int totalReps;
