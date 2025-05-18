@@ -15,6 +15,7 @@ public interface ExerciseTemplateRepository extends JpaRepository<ExerciseTempla
 
     Optional<ExerciseTemplate> findByNameIgnoreCase(String name);
 
-    @Query("SELECT e FROM ExerciseTemplate e JOIN e.targetMuscleGroups m WHERE m = :muscleGroup")
-    List<ExerciseTemplate> findByTargetMuscleGroup(@Param("muscleGroup") String muscleGroup);
+
+    @Query("SELECT et.targetMuscleGroups FROM ExerciseTemplate et WHERE et.name = :exerciseName")
+    List<String> findMuscleGroupsByExerciseName(@Param("exerciseName") String exerciseName);
 }
