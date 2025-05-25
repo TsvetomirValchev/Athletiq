@@ -6,7 +6,6 @@ import com.valchev.athletiq.domain.dto.RegistrationResponseDTO;
 import com.valchev.athletiq.domain.dto.ResetPasswordDTO;
 import com.valchev.athletiq.domain.dto.UserDTO;
 import com.valchev.athletiq.domain.exception.AccessDeniedException;
-import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.security.JwtTokenService;
 import com.valchev.athletiq.security.PasswordResetService;
 import com.valchev.athletiq.service.EmailService;
@@ -21,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -97,10 +97,9 @@ public class UserAuthController {
         response.put("valid", true);
         response.put("username", userDetails.getUsername());
 
-        if (isMobile) {
-            String newToken = jwtTokenService.generateTokenForUser(userDetails.getUsername(), true);
-            response.put("token", newToken);
-        }
+
+        String newToken = jwtTokenService.generateTokenForUser(userDetails.getUsername(), isMobile);
+        response.put("token", newToken);
 
         return ResponseEntity.ok(response);
     }
@@ -146,12 +145,17 @@ public class UserAuthController {
             @PathVariable("id") String id,
             Authentication authentication) {
         UUID userId = UUID.fromString(id);
-        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
 
-        UserDTO userDTO = userService.getById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        // Get username from JWT
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
 
-        if (!userDTO.getUsername().equals(currentUser.getUsername())) {
+        // Find user by username and get their ID
+        UserDTO currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new AccessDeniedException("User not found"));
+
+        // Compare the IDs
+        if (!userId.equals(currentUser.getUserId())) {
             throw new AccessDeniedException("You can only delete your own account");
         }
 

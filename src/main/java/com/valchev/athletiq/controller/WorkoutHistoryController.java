@@ -32,7 +32,6 @@ public class WorkoutHistoryController {
 
     private final WorkoutHistoryService workoutHistoryService;
     private final WorkoutHistoryMapper workoutHistoryMapper;
-    private final ExerciseHistoryMapper exerciseHistoryMapper;
 
     @GetMapping("/{workoutHistoryId}")
     public ResponseEntity<WorkoutHistoryDTO> getWorkoutHistory(@PathVariable UUID workoutHistoryId) {

@@ -35,16 +35,18 @@ public class AthletiqJwtConverter implements Converter<Jwt, AbstractAuthenticati
                 System.out.println("Warning: Invalid userId format in JWT: " + userIdStr);
             }
         }
+        String email = jwt.getClaimAsString("email");
 
-        return getJwtAuthenticationToken(jwt, authorities, userId);
+        return getJwtAuthenticationToken(jwt, authorities, userId, email);
     }
 
-    private static JwtAuthenticationToken getJwtAuthenticationToken(Jwt jwt, Collection<GrantedAuthority> authorities, UUID userId) {
+    private static JwtAuthenticationToken getJwtAuthenticationToken(Jwt jwt, Collection<GrantedAuthority> authorities, UUID userId, String email) {
         AthletiqUser user = new AthletiqUser(
                 jwt.getSubject(),
                 "",
                 authorities,
-                userId
+                userId,
+                email
         );
 
         JwtAuthenticationToken token = new JwtAuthenticationToken(

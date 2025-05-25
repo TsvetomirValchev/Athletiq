@@ -36,7 +36,7 @@ public class JwtTokenService {
 
         Instant expiration = isMobile ?
                 now.plus(30, ChronoUnit.DAYS) :
-                now.plus(1, ChronoUnit.MINUTES);
+                now.plus(30, ChronoUnit.MINUTES);
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -44,6 +44,8 @@ public class JwtTokenService {
                 .expiresAt(expiration)
                 .subject(username)
                 .claim("userId", athletiqUser.getUserId().toString())
+                .claim("username", athletiqUser.getUsername())
+                .claim("email", athletiqUser.getEmail())
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
