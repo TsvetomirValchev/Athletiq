@@ -11,6 +11,7 @@ import com.valchev.athletiq.domain.mapper.ExerciseMapper;
 import com.valchev.athletiq.domain.mapper.ExerciseSetMapper;
 import com.valchev.athletiq.domain.mapper.WorkoutMapper;
 import com.valchev.athletiq.repository.WorkoutRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class WorkoutService {
 
     private final WorkoutRepository workoutRepository;
@@ -146,10 +148,8 @@ public class WorkoutService {
         Workout workout = retrieveWorkout(workoutId);
 
         boolean removed = workout.getExercises().removeIf(e -> e.getExerciseId().equals(exerciseId));
-
-        if (!removed) {
-            throw new ResourceNotFoundException("Exercise not found in workout");
-        }
+        log.info("Removed value {}", removed);
+        exerciseService.deleteById(exerciseId);
 
         Workout savedWorkout = workoutRepository.save(workout);
         return workoutMapper.toDTO(savedWorkout);

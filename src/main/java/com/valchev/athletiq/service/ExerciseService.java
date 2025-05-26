@@ -29,6 +29,10 @@ public class ExerciseService {
         this.exerciseSetMapper = exerciseSetMapper;
     }
 
+    public void deleteById(UUID exerciseId) {
+        exerciseRepository.deleteById(exerciseId);
+    }
+
     public void removeSetByOrderPosition(UUID exerciseId, Integer orderPosition) {
         Exercise exercise = exerciseRepository.findById(exerciseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));

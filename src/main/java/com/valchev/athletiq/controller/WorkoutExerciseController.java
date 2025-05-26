@@ -85,7 +85,7 @@ public class WorkoutExerciseController {
 
 
 
-    @DeleteMapping("{exerciseId}")
+    @DeleteMapping("/{exerciseId}")
     public ResponseEntity<WorkoutDTO> removeExerciseFromWorkout(
             @PathVariable UUID workoutId,
             @PathVariable UUID exerciseId,
