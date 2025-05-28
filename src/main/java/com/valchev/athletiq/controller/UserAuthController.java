@@ -90,15 +90,20 @@ public class UserAuthController {
     public ResponseEntity<?> validateToken(
             Authentication authentication,
             @RequestHeader(value = "X-Client-Type") String clientType) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        String username;
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            username = jwt.getSubject();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         boolean isMobile = clientType.equalsIgnoreCase("mobile");
         Map<String, Object> response = new HashMap<>();
         response.put("valid", true);
-        response.put("username", userDetails.getUsername());
+        response.put("username", username);
 
-
-        String newToken = jwtTokenService.generateTokenForUser(userDetails.getUsername(), isMobile);
+        String newToken = jwtTokenService.generateTokenForUser(username, isMobile);
         response.put("token", newToken);
 
         return ResponseEntity.ok(response);

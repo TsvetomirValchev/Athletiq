@@ -1,11 +1,14 @@
 package com.valchev.athletiq.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,4 +36,7 @@ public class WorkoutHistoryDTO {
 
     @Builder.Default
     private List<ExerciseHistoryDTO> exerciseHistories = new ArrayList<>();
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Timestamp createdAt;
 }

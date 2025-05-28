@@ -7,12 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -46,4 +48,11 @@ public class WorkoutHistory {
     @OneToMany(mappedBy = "workoutHistory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseHistory> exerciseHistories = new ArrayList<>();
 
+    @Column
+    private Timestamp createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
 }
