@@ -125,19 +125,13 @@ public class WorkoutService {
     public WorkoutDTO updateWorkoutExercise(UUID workoutId, ExerciseDTO exerciseDTO) {
         Workout workout = retrieveWorkout(workoutId);
 
-        boolean exerciseUpdated = false;
-        for (int i = 0; i < workout.getExercises().size(); i++) {
-            if (workout.getExercises().get(i).getExerciseId().equals(exerciseDTO.getExerciseId())) {
+        for (int exerciseIndex = 0; exerciseIndex < workout.getExercises().size(); exerciseIndex++) {
+            if (workout.getExercises().get(exerciseIndex).getExerciseId().equals(exerciseDTO.getExerciseId())) {
                 Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO);
                 updatedExercise.setWorkout(workout);
-                workout.getExercises().set(i, updatedExercise);
-                exerciseUpdated = true;
+                workout.getExercises().set(exerciseIndex, updatedExercise);
                 break;
             }
-        }
-
-        if (!exerciseUpdated) {
-            throw new ResourceNotFoundException("Exercise not found in workout");
         }
 
         Workout savedWorkout = workoutRepository.save(workout);

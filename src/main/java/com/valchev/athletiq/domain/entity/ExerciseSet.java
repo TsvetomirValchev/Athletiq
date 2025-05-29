@@ -44,7 +44,4 @@ public class ExerciseSet {
     @Column(nullable = false)
     private Boolean completed = false;
 
-    @Column
-    private LocalDateTime lastModified;
-
 }

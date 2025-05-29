@@ -1,6 +1,5 @@
 package com.valchev.athletiq.domain.dto;
 
-import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Data;
 
