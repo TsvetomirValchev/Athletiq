@@ -29,6 +29,9 @@ public interface ExerciseMapper {
     @Mapping(target = "orderPosition", source = "orderPosition")
     Exercise toEntity(ExerciseDTO exerciseDTO);
 
+    @Mapping(target = "sets", ignore = true)
+    void update(@MappingTarget Exercise entity, Exercise updateEntity);
+
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);
 
     @Named("countSets")
@@ -65,7 +68,6 @@ public interface ExerciseMapper {
                         set.setWeight(setDto.getWeight());
                         set.setRestTimeSeconds(setDto.getRestTimeSeconds());
                         set.setType(setDto.getType());
-                        set.setCompleted(setDto.getCompleted());
                         set.setExercise(exercise); // Set the parent reference
                         return set;
                     })

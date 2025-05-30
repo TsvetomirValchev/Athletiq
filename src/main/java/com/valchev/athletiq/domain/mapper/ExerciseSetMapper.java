@@ -13,7 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ExerciseSetMapper {
 
-    @Mapping(source = "exercise.exerciseId", target = "exerciseId")
     ExerciseSetDTO toDTO(ExerciseSet exerciseSet);
 
     @Mapping(target = "exercise", ignore = true)

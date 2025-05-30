@@ -26,53 +26,30 @@ public class JwtTokenService {
     }
 
     public String generateMobileToken(Authentication authentication) {
-        return generateToken(authentication, 30, ChronoUnit.DAYS);
-    }
-
-    public String generateTokenForUser(String username, boolean isMobile) {
-        AthletiqUser athletiqUser = (AthletiqUser) userDetailsService.loadUserByUsername(username);
-
-        Instant now = Instant.now();
-
-        Instant expiration = isMobile ?
-                now.plus(30, ChronoUnit.DAYS) :
-                now.plus(30, ChronoUnit.MINUTES);
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(expiration)
-                .subject(username)
-                .claim("userId", athletiqUser.getUserId().toString())
-                .claim("username", athletiqUser.getUsername())
-                .claim("email", athletiqUser.getEmail())
-                .build();
-
-        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return generateToken(authentication, 3, ChronoUnit.MINUTES);
     }
 
     // Flexible token generation with custom duration
     public String generateToken(Authentication authentication, long amount, ChronoUnit unit) {
         Instant now = Instant.now();
+
         String scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
-        UUID userId = null;
-        if (authentication.getPrincipal() instanceof AthletiqUser) {
-            userId = ((AthletiqUser) authentication.getPrincipal()).getUserId();
-        }
+        String username = authentication.getName();
+        AthletiqUser athletiqUser = (AthletiqUser) userDetailsService.loadUserByUsername(username);
+
 
         JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(amount, unit))
                 .subject(authentication.getName())
+                .claim("userId", athletiqUser.getUserId().toString())
+                .claim("username", athletiqUser.getUsername())
+                .claim("email", athletiqUser.getEmail())
                 .claim("scope", scope);
-
-        if (userId != null) {
-            claimsBuilder.claim("userId", userId);
-        }
 
         return this.encoder.encode(JwtEncoderParameters.from(claimsBuilder.build())).getTokenValue();
     }

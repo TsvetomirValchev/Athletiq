@@ -80,34 +80,21 @@ public class UserAuthController {
         return usernameOrEmail;
     }
 
-    private String generateToken(Authentication authentication, String clientType) {
-        return clientType.equalsIgnoreCase("mobile") ?
-                jwtTokenService.generateMobileToken(authentication) :
-                jwtTokenService.generateToken(authentication);
-    }
 
     @GetMapping("/validate-token")
     public ResponseEntity<?> validateToken(
             Authentication authentication,
             @RequestHeader(value = "X-Client-Type") String clientType) {
 
-        String username;
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            username = jwt.getSubject();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        boolean isMobile = clientType.equalsIgnoreCase("mobile");
-        Map<String, Object> response = new HashMap<>();
-        response.put("valid", true);
-        response.put("username", username);
-
-        String newToken = jwtTokenService.generateTokenForUser(username, isMobile);
-        response.put("token", newToken);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(generateToken(authentication, clientType));
     }
+
+    private String generateToken(Authentication authentication, String clientType) {
+        return clientType.equalsIgnoreCase("mobile") ?
+                jwtTokenService.generateMobileToken(authentication) :
+                jwtTokenService.generateToken(authentication);
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponseDTO> register(@Valid @RequestBody UserDTO userDTO) {
@@ -151,15 +138,12 @@ public class UserAuthController {
             Authentication authentication) {
         UUID userId = UUID.fromString(id);
 
-        // Get username from JWT
         Jwt jwt = (Jwt) authentication.getPrincipal();
         String username = jwt.getSubject();
 
-        // Find user by username and get their ID
         UserDTO currentUser = userService.findByUsername(username)
                 .orElseThrow(() -> new AccessDeniedException("User not found"));
 
-        // Compare the IDs
         if (!userId.equals(currentUser.getUserId())) {
             throw new AccessDeniedException("You can only delete your own account");
         }

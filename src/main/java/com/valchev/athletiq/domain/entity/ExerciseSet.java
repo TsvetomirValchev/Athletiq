@@ -41,7 +41,4 @@ public class ExerciseSet {
     @Enumerated(EnumType.STRING)
     private SetType type;
 
-    @Column(nullable = false)
-    private Boolean completed = false;
-
 }

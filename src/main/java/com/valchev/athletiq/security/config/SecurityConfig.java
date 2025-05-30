@@ -57,7 +57,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password").permitAll()
-                        .requestMatchers("/workouts/**", "/active-workouts/**", "/exercise-templates/**", "/statistics/**, /auth/validate-token").authenticated()
+                        .requestMatchers("/workouts/**", "/active-workouts/**", "/exercise-templates/**", "/statistics/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
