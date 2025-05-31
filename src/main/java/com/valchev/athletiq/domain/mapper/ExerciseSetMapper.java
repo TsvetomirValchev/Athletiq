@@ -16,19 +16,13 @@ public interface ExerciseSetMapper {
     @Mapping(source = "exercise.exerciseId", target = "exerciseId")
     ExerciseSetDTO toDTO(ExerciseSet exerciseSet);
 
-    @Mapping(target = "exercise", ignore = true)
+    @Mapping(source = "exerciseId", target = "exercise.exerciseId")
     ExerciseSet toEntity(ExerciseSetDTO exerciseSetDTO);
 
     List<ExerciseSetDTO> toDTOs(List<ExerciseSet> exerciseSets);
 
     List<ExerciseSet> toEntities(List<ExerciseSetDTO> exerciseSetDTOs);
 
-    @AfterMapping
-    default void setExerciseReference(@MappingTarget ExerciseSet set, ExerciseSetDTO dto) {
-        if (dto.getExerciseId() != null) {
-            Exercise exercise = new Exercise();
-            exercise.setExerciseId(dto.getExerciseId());
-            set.setExercise(exercise);
-        }
-    }
+    void update(@MappingTarget ExerciseSet entity, ExerciseSet updateEntity);
+
 }

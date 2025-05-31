@@ -51,7 +51,7 @@ public class UserService {
                 .map(userMapper::toDTO);
     }
 
-    public UserDTO updatePassword(UUID userId, String newPassword) {
+    public void updatePassword(UUID userId, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
@@ -59,7 +59,7 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         log.info("Password updated to {} for user: {}", newPassword, userId);
 
-        return userMapper.toDTO(updatedUser);
+        userMapper.toDTO(updatedUser);
     }
 
     public boolean isEmail(String input) {

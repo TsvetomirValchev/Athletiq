@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "exercise_templates")
+@Table(name = "exercise_template")
 @Data
 public class ExerciseTemplate {
 

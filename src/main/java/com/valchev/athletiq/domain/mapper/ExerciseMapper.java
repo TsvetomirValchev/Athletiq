@@ -15,17 +15,23 @@ public interface ExerciseMapper {
     @Mapping(source = "workout.workoutId", target = "workoutId")
     @Mapping(source = "exerciseTemplate.exerciseTemplateId", target = "exerciseTemplateId")
     @Mapping(source = "exerciseTemplate.name", target = "name")
+    @Mapping(target = "orderPosition", source = "orderPosition")
     @Mapping(source = "sets", target = "sets")
     @Mapping(source = "sets", target = "totalSets", qualifiedByName = "countSets")
     @Mapping(source = "sets", target = "maxWeight", qualifiedByName = "calculateMaxWeight")
     @Mapping(source = "sets", target = "totalReps", qualifiedByName = "calculateTotalReps")
+    @Mapping(source = "exerciseId", target = "exerciseId")
     ExerciseDTO toDTO(Exercise exercise);
 
     @Mapping(source = "exerciseId", target = "exerciseId")
     @Mapping(source = "workoutId", target = "workout.workoutId")
     @Mapping(source = "exerciseTemplateId", target = "exerciseTemplate.exerciseTemplateId")
     @Mapping(target = "sets", ignore = true)
+    @Mapping(target = "orderPosition", source = "orderPosition")
     Exercise toEntity(ExerciseDTO exerciseDTO);
+
+    @Mapping(target = "sets", ignore = true)
+    void update(@MappingTarget Exercise entity, Exercise updateEntity);
 
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);
 
@@ -63,7 +69,6 @@ public interface ExerciseMapper {
                         set.setWeight(setDto.getWeight());
                         set.setRestTimeSeconds(setDto.getRestTimeSeconds());
                         set.setType(setDto.getType());
-                        set.setCompleted(setDto.getCompleted());
                         set.setExercise(exercise); // Set the parent reference
                         return set;
                     })

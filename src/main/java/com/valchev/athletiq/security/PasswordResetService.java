@@ -1,5 +1,6 @@
 package com.valchev.athletiq.security;
 
+import com.valchev.athletiq.domain.dto.PasswordResetToken;
 import com.valchev.athletiq.domain.dto.UserDTO;
 import com.valchev.athletiq.domain.exception.InvalidTokenException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
@@ -57,10 +58,4 @@ public class PasswordResetService {
         tokens.remove(token);
     }
 
-    @Getter
-    @AllArgsConstructor
-    private static class PasswordResetToken {
-        private UUID userId;
-        private LocalDateTime expiration;
-    }
 }

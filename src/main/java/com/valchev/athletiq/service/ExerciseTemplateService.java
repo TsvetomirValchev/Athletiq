@@ -28,7 +28,7 @@ public class ExerciseTemplateService {
     }
 
     public Optional<ExerciseTemplateDTO> findByName(String name) {
-        return exerciseTemplateRepository.findByName(name)
+        return exerciseTemplateRepository.findByNameIgnoreCase(name)
                 .map(exerciseTemplateMapper::toDTO);
     }
 
@@ -38,5 +38,10 @@ public class ExerciseTemplateService {
                 .toList();
 
         return exerciseTemplateMapper.toDTOList(templates);
+    }
+
+    public Optional<String> findImageUrlByName(String exerciseName) {
+        return exerciseTemplateRepository.findByNameIgnoreCase(exerciseName)
+                .map(ExerciseTemplate::getImageUrl);
     }
 }

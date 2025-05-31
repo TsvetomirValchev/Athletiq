@@ -4,6 +4,7 @@ import com.valchev.athletiq.domain.entity.SetType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -18,5 +19,6 @@ public class ExerciseSetDTO {
     private Integer restTimeSeconds;
     private SetType type;
     private Boolean completed;
+    private LocalDateTime lastModified;
 
 }

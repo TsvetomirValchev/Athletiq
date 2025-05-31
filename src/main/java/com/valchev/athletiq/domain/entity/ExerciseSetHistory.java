@@ -2,43 +2,45 @@ package com.valchev.athletiq.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "exercise_set")
+@Entity
+@Table(name = "set_history")
 @Data
-public class ExerciseSet {
-
+@AllArgsConstructor
+@NoArgsConstructor
+public class ExerciseSetHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID exerciseSetId;
+    private UUID exerciseSetHistoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Exercise exercise;
+    @JoinColumn(name = "exercise_history_id")
+    private ExerciseHistory exerciseHistory;
 
     @Column(nullable = false)
-    private Integer orderPosition;
+    private int orderPosition;
 
-    @Column(nullable = false)
+    @Column
     private Integer reps;
 
-    @Column(nullable = false)
+    @Column
     private Double weight;
 
     @Column
-    private Integer restTimeSeconds;
+    private boolean completed;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Column
     private SetType type;
-
 }
