@@ -1,10 +1,11 @@
 package com.valchev.athletiq.controller;
 
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
-import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.security.AthletiqUser;
+import com.valchev.athletiq.service.ExerciseService;
 import com.valchev.athletiq.service.WorkoutService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,9 +23,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/workouts/{workoutId}/exercises")
 @RequiredArgsConstructor
+@Slf4j
 public class WorkoutExerciseController {
 
     private final WorkoutService workoutService;
+    private final ExerciseService exerciseService;
 
     @GetMapping
     public ResponseEntity<List<ExerciseDTO>> getWorkoutExercises(
@@ -32,31 +35,25 @@ public class WorkoutExerciseController {
             Authentication authentication) {
         AthletiqUser user = (AthletiqUser) authentication.getDetails();
         workoutService.verifyOwnership(workoutId, user.getUserId());
-        List<ExerciseDTO> exercises = workoutService.getExercisesByWorkoutId(workoutId);
+        List<ExerciseDTO> exercises = exerciseService.getAllExercisesByWorkoutId(workoutId);
         return ResponseEntity.ok(exercises);
     }
 
     @PostMapping
-    public ResponseEntity<WorkoutDTO> addExerciseToWorkout(
+    public ResponseEntity<ExerciseDTO> addExerciseToWorkout(
             @PathVariable UUID workoutId,
             @RequestBody ExerciseDTO exerciseDTO,
             Authentication authentication) {
         AthletiqUser user = (AthletiqUser) authentication.getDetails();
         workoutService.verifyOwnership(workoutId, user.getUserId());
-
-        WorkoutDTO updatedWorkout = workoutService.addExerciseWithSets(workoutId, exerciseDTO);
-        return ResponseEntity.ok(updatedWorkout);
-    }
-
-    @PostMapping("/batch-exercises")
-    public ResponseEntity<WorkoutDTO> addMultipleExercisesToWorkout(
-            @PathVariable UUID workoutId,
-            @RequestBody List<ExerciseDTO> exerciseDTOs,
-            Authentication authentication) {
-        AthletiqUser user = (AthletiqUser) authentication.getDetails();
-        workoutService.verifyOwnership(workoutId, user.getUserId());
-        WorkoutDTO updatedWorkout = workoutService.addBatchExercisesWithSets(workoutId, exerciseDTOs);
-        return ResponseEntity.ok(updatedWorkout);
+        exerciseDTO.setWorkoutId(workoutId);
+        log.info("Adding exercise to workout: {}", exerciseDTO.getWorkoutId());
+        log.info("Exercise details: {}", exerciseDTO);
+        log.info("Exercise name: {}", exerciseDTO.getName());
+        log.info("Exercise id: {}", exerciseDTO.getExerciseId());
+        ExerciseDTO exercise = exerciseService.save(exerciseDTO);
+        log.info("Exercise added with ID: {}", exercise.getExerciseId());
+        return ResponseEntity.ok(exercise);
     }
 
     @GetMapping("/{exerciseId}")
@@ -66,12 +63,12 @@ public class WorkoutExerciseController {
             Authentication authentication) {
         AthletiqUser user = (AthletiqUser) authentication.getDetails();
         workoutService.verifyOwnership(workoutId, user.getUserId());
-        ExerciseDTO exercise = workoutService.getWorkoutExerciseById(workoutId, exerciseId);
+        ExerciseDTO exercise = exerciseService.findById(exerciseId);
         return ResponseEntity.ok(exercise);
     }
 
     @PutMapping("/{exerciseId}")
-    public ResponseEntity<WorkoutDTO> updateWorkoutExercise(
+    public ResponseEntity<ExerciseDTO> updateWorkoutExercise(
             @PathVariable UUID workoutId,
             @PathVariable UUID exerciseId,
             @RequestBody ExerciseDTO exerciseDTO,
@@ -79,20 +76,20 @@ public class WorkoutExerciseController {
         AthletiqUser user = (AthletiqUser) authentication.getDetails();
         workoutService.verifyOwnership(workoutId, user.getUserId());
         exerciseDTO.setExerciseId(exerciseId);
-        WorkoutDTO updatedWorkout = workoutService.updateWorkoutExercise(workoutId, exerciseDTO);
-        return ResponseEntity.ok(updatedWorkout);
+        ExerciseDTO updatedExercise = exerciseService.updateExercise(exerciseId, exerciseDTO);
+        return ResponseEntity.ok(updatedExercise);
     }
 
 
 
     @DeleteMapping("/{exerciseId}")
-    public ResponseEntity<WorkoutDTO> removeExerciseFromWorkout(
+    public ResponseEntity<Void> removeExerciseFromWorkout(
             @PathVariable UUID workoutId,
             @PathVariable UUID exerciseId,
             Authentication authentication) {
         AthletiqUser user = (AthletiqUser) authentication.getDetails();
         workoutService.verifyOwnership(workoutId, user.getUserId());
-        WorkoutDTO updatedWorkout = workoutService.removeExerciseFromWorkout(workoutId, exerciseId);
-        return ResponseEntity.ok(updatedWorkout);
+        exerciseService.deleteById(exerciseId);
+        return ResponseEntity.noContent().build();
     }
 }

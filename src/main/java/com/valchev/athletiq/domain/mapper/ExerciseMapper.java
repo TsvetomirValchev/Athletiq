@@ -20,6 +20,7 @@ public interface ExerciseMapper {
     @Mapping(source = "sets", target = "totalSets", qualifiedByName = "countSets")
     @Mapping(source = "sets", target = "maxWeight", qualifiedByName = "calculateMaxWeight")
     @Mapping(source = "sets", target = "totalReps", qualifiedByName = "calculateTotalReps")
+    @Mapping(source = "exerciseId", target = "exerciseId")
     ExerciseDTO toDTO(Exercise exercise);
 
     @Mapping(source = "exerciseId", target = "exerciseId")

@@ -4,12 +4,10 @@ import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
-import com.valchev.athletiq.domain.entity.Workout;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.domain.mapper.ExerciseMapper;
 import com.valchev.athletiq.domain.mapper.ExerciseSetMapper;
 import com.valchev.athletiq.repository.ExerciseRepository;
-import com.valchev.athletiq.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +19,21 @@ import java.util.UUID;
 public class ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
-    private final ExerciseSetMapper exerciseSetMapper;
+    private final ExerciseMapper exerciseMapper;
+
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseSetMapper exerciseSetMapper) {
+    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper) {
         this.exerciseRepository = exerciseRepository;
-        this.exerciseSetMapper = exerciseSetMapper;
+        this.exerciseMapper = exerciseMapper;
     }
+
+    public ExerciseDTO save(ExerciseDTO exerciseDTO) {
+        Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
+        Exercise savedExercise = exerciseRepository.save(exercise);
+        return exerciseMapper.toDTO(savedExercise);
+    }
+
 
     public void deleteById(UUID exerciseId) {
         exerciseRepository.deleteById(exerciseId);
@@ -60,16 +66,28 @@ public class ExerciseService {
                 .toList();
     }
 
-    public void addSetToExercise(UUID exerciseId, ExerciseSetDTO setDTO) {
-        Exercise exercise = exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+    public ExerciseDTO updateExercise(UUID exerciseId, ExerciseDTO exerciseDTO) {
+        Exercise existingExercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with ID: " + exerciseId));
 
-        setDTO.setExerciseId(exerciseId);
+        Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO);
+        exerciseMapper.update(existingExercise, updatedExercise);
 
-        ExerciseSet set = exerciseSetMapper.toEntity(setDTO);
-
-        exercise.getSets().add(set);
-
-        exerciseRepository.save(exercise);
+        Exercise savedExercise = exerciseRepository.save(existingExercise);
+        return exerciseMapper.toDTO(savedExercise);
     }
+
+    public List<ExerciseDTO> getAllExercisesByWorkoutId(UUID workoutId) {
+        return exerciseRepository.findAllExercisesByWorkout_WorkoutId(workoutId)
+                .stream()
+                .map(exerciseMapper::toDTO)
+                .toList();
+    }
+
+    public ExerciseDTO findById(UUID exerciseId) {
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with ID: " + exerciseId));
+        return exerciseMapper.toDTO(exercise);
+    }
+
 }
