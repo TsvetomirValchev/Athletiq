@@ -47,12 +47,7 @@ public class WorkoutExerciseController {
         AthletiqUser user = (AthletiqUser) authentication.getDetails();
         workoutService.verifyOwnership(workoutId, user.getUserId());
         exerciseDTO.setWorkoutId(workoutId);
-        log.info("Adding exercise to workout: {}", exerciseDTO.getWorkoutId());
-        log.info("Exercise details: {}", exerciseDTO);
-        log.info("Exercise name: {}", exerciseDTO.getName());
-        log.info("Exercise id: {}", exerciseDTO.getExerciseId());
         ExerciseDTO exercise = exerciseService.save(exerciseDTO);
-        log.info("Exercise added with ID: {}", exercise.getExerciseId());
         return ResponseEntity.ok(exercise);
     }
 

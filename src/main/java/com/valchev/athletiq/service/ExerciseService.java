@@ -1,13 +1,15 @@
 package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
-import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.domain.mapper.ExerciseMapper;
 import com.valchev.athletiq.domain.mapper.ExerciseSetMapper;
 import com.valchev.athletiq.repository.ExerciseRepository;
+import com.valchev.athletiq.repository.ExerciseTemplateRepository;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +18,25 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
     private final ExerciseMapper exerciseMapper;
+    private final ExerciseTemplateRepository exerciseTemplateRepository;
 
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper) {
+    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper, ExerciseTemplateRepository exerciseTemplateRepository) {
         this.exerciseRepository = exerciseRepository;
         this.exerciseMapper = exerciseMapper;
+        this.exerciseTemplateRepository = exerciseTemplateRepository;
     }
 
+    @Transactional
     public ExerciseDTO save(ExerciseDTO exerciseDTO) {
         Exercise exercise = exerciseMapper.toEntity(exerciseDTO);
+        exercise.setExerciseTemplate(exerciseTemplateRepository.getReferenceById(exerciseDTO.getExerciseTemplateId()));
         Exercise savedExercise = exerciseRepository.save(exercise);
         return exerciseMapper.toDTO(savedExercise);
     }
@@ -70,8 +77,8 @@ public class ExerciseService {
         Exercise existingExercise = exerciseRepository.findById(exerciseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with ID: " + exerciseId));
 
-        Exercise updatedExercise = exerciseMapper.toEntity(exerciseDTO);
-        exerciseMapper.update(existingExercise, updatedExercise);
+        existingExercise.setExerciseTemplate(exerciseTemplateRepository.getReferenceById(exerciseDTO.getExerciseTemplateId()));
+        exerciseMapper.update(existingExercise, exerciseDTO);
 
         Exercise savedExercise = exerciseRepository.save(existingExercise);
         return exerciseMapper.toDTO(savedExercise);

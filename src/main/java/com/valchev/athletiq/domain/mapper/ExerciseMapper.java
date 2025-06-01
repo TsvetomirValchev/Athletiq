@@ -14,48 +14,23 @@ public interface ExerciseMapper {
 
     @Mapping(source = "workout.workoutId", target = "workoutId")
     @Mapping(source = "exerciseTemplate.exerciseTemplateId", target = "exerciseTemplateId")
-    @Mapping(source = "exerciseTemplate.name", target = "name")
-    @Mapping(target = "orderPosition", source = "orderPosition")
+    @Mapping(source = "orderPosition", target = "orderPosition")
     @Mapping(source = "sets", target = "sets")
-    @Mapping(source = "sets", target = "totalSets", qualifiedByName = "countSets")
-    @Mapping(source = "sets", target = "maxWeight", qualifiedByName = "calculateMaxWeight")
-    @Mapping(source = "sets", target = "totalReps", qualifiedByName = "calculateTotalReps")
     @Mapping(source = "exerciseId", target = "exerciseId")
+    @Mapping(source = "exerciseTemplate.name", target = "name")
     ExerciseDTO toDTO(Exercise exercise);
 
     @Mapping(source = "exerciseId", target = "exerciseId")
     @Mapping(source = "workoutId", target = "workout.workoutId")
-    @Mapping(source = "exerciseTemplateId", target = "exerciseTemplate.exerciseTemplateId")
     @Mapping(target = "sets", ignore = true)
-    @Mapping(target = "orderPosition", source = "orderPosition")
+    @Mapping(source = "orderPosition", target = "orderPosition")
+    @Mapping(target = "exerciseTemplate", ignore = true)
     Exercise toEntity(ExerciseDTO exerciseDTO);
 
     @Mapping(target = "sets", ignore = true)
-    void update(@MappingTarget Exercise entity, Exercise updateEntity);
+    void update(@MappingTarget Exercise entity, ExerciseDTO dto);
 
     List<ExerciseDTO> toDTOs(List<Exercise> exercises);
-
-    @Named("countSets")
-    default int countSets(List<ExerciseSet> sets) {
-        return sets != null ? sets.size() : 0;
-    }
-
-    @Named("calculateMaxWeight")
-    default double calculateMaxWeight(List<ExerciseSet> sets) {
-        if (sets == null || sets.isEmpty()) return 0;
-        return sets.stream()
-                .mapToDouble(ExerciseSet::getWeight)
-                .max()
-                .orElse(0);
-    }
-
-    @Named("calculateTotalReps")
-    default int calculateTotalReps(List<ExerciseSet> sets) {
-        if (sets == null || sets.isEmpty()) return 0;
-        return sets.stream()
-                .mapToInt(ExerciseSet::getReps)
-                .sum();
-    }
 
     @AfterMapping
     default void mapSets(ExerciseDTO dto, @MappingTarget Exercise exercise) {

@@ -31,7 +31,7 @@ public class Exercise {
     @ManyToOne(fetch = FetchType.LAZY)
     private Workout workout;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private ExerciseTemplate exerciseTemplate;
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
