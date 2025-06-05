@@ -1,7 +1,6 @@
 package com.valchev.athletiq.controller;
 
 import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
-import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.security.AthletiqUser;
 import com.valchev.athletiq.service.ExerciseSetService;
 import com.valchev.athletiq.service.WorkoutService;
