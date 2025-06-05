@@ -1,0 +1,39 @@
+# Ignore build artifacts
+target/
+*.jar
+*.war
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore Git
+.git/
+.gitignore
+README.md
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore node modules if you have any frontend assets
+node_modules/
+
+# Ignore Docker files
+Dockerfile
+.dockerignore
+
+# Ignore CI/CD files
+.github/
+.gitlab-ci.yml
