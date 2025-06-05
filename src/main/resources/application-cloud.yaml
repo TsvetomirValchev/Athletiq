@@ -1,12 +1,14 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:postgresql://${{Postgres.PGHOST}}:5432/${{Postgres.PGDATABASE}}
+    username: ${{Postgres.PGUSER}}
+    password: ${{Postgres.PGPASSWORD}}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
   mail:
     host: smtp.gmail.com
