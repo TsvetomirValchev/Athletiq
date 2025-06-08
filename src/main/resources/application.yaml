@@ -7,7 +7,7 @@ spring:
 
 rsa:
   private-key: ${RSA_PRIVATE_KEY:classpath:/certs/private.pem}
-  public-key: ${RSA_PUBLIC_KEY:classpath:/certs/private.pem}
+  public-key: ${RSA_PUBLIC_KEY:classpath:/certs/public.pem}
 
 server:
   port: 8080

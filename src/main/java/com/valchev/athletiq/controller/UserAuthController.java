@@ -80,15 +80,6 @@ public class UserAuthController {
         return usernameOrEmail;
     }
 
-
-    @GetMapping("/validate-token")
-    public ResponseEntity<?> validateToken(
-            Authentication authentication,
-            @RequestHeader(value = "X-Client-Type") String clientType) {
-
-        return ResponseEntity.ok(generateToken(authentication, clientType));
-    }
-
     private String generateToken(Authentication authentication, String clientType) {
         return clientType.equalsIgnoreCase("mobile") ?
                 jwtTokenService.generateMobileToken(authentication) :
