@@ -103,12 +103,13 @@ public class UserAuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request) {
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request,
+                                            @RequestHeader(name = "X-Client-Type", defaultValue = "web") String clientType){
         String email = request.getEmail();
 
         userService.findByEmail(email).ifPresent(user -> {
             String token = passwordResetService.createToken(user);
-            emailService.sendPasswordResetEmail(user.getEmail(), token);
+            emailService.sendPasswordResetEmail(user.getEmail(), token, clientType);
         });
 
         return ResponseEntity.ok().build();

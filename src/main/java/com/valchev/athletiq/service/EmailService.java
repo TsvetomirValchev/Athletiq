@@ -3,6 +3,7 @@ package com.valchev.athletiq.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -11,24 +12,50 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
-    @Autowired
-    private JavaMailSender emailSender;
 
-    public void sendPasswordResetEmail(String to, String token) {
-        String resetUrl = "http://localhost:8100/reset-password?token=" + token;
+        @Autowired
+        private final JavaMailSender emailSender;
+
+        @Value("${app.web.reset-url}")
+        private String webResetUrl;
+
+        @Value("${app.mobile.reset-scheme}")
+        private String mobileResetScheme;
+
+        public void sendPasswordResetEmail(String to, String token, String clientType) {
+            String resetUrl;
+
+            boolean isMobileRequest = "mobile".equalsIgnoreCase(clientType);
+
+            if (isMobileRequest) {
+                resetUrl = mobileResetScheme + "://reset-password?token=" + token;
+            } else {
+                resetUrl = webResetUrl + "?token=" + token;
+            }
+
+
+            SimpleMailMessage message = createSimpleMailMessage(to, resetUrl);
+
+            try {
+                emailSender.send(message);
+                log.info("Email sent successfully to {}", to);
+            } catch (Exception e) {
+                log.error("Failed to send email: {}", e.getMessage(), e);
+            }
+        }
+
+    private SimpleMailMessage createSimpleMailMessage(String to, String resetUrl) {
+        String htmlContent =
+                "<html><body>" +
+                        "<p>Reset your password by clicking below:</p>" +
+                        "<a href='" + resetUrl + "' style='color: blue;'>Click here to reset password</a>" +
+                        "</body></html>";
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("athletiq50@gmail.com");
         message.setTo(to);
         message.setSubject("Password Reset Request");
-        message.setText("Please click on the link below to reset your password:\n\n" + resetUrl);
-
-        try {
-            emailSender.send(message);
-            log.info("Email sent successfully {}, to {}", message, to);
-        } catch (Exception e) {
-
-            log.info("Failed to send email: {}", e.getMessage());
-        }
+        message.setText(htmlContent);
+        return message;
     }
 }

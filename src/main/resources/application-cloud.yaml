@@ -21,3 +21,8 @@ spring:
           auth: true
           starttls:
             enable: true
+app:
+  web:
+    reset-url: https://your-production-domain.com/reset-password
+  mobile:
+    reset-scheme: athletiq
