@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class ExerciseSetDTO {
+public class SetDTO {
 
     private UUID exerciseSetId;
     private UUID exerciseId;

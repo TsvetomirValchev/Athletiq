@@ -23,6 +23,6 @@ spring:
             enable: true
 app:
   web:
-    reset-url: https://your-production-domain.com/reset-password
+    reset-url: https://athletiq-5o6z.onrender.com
   mobile:
     reset-scheme: athletiq

@@ -44,6 +44,6 @@ public class ExerciseHistory {
     private String notes;
 
     @OneToMany(mappedBy = "exerciseHistory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ExerciseSetHistory> exerciseSetHistories = new ArrayList<>();
+    private List<SetHistory> exerciseSetHistories = new ArrayList<>();
 
 }

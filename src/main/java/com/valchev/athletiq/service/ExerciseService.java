@@ -4,8 +4,8 @@ import com.valchev.athletiq.domain.dto.ExerciseDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
-import com.valchev.athletiq.domain.mapper.ExerciseMapper;
-import com.valchev.athletiq.domain.mapper.ExerciseSetMapper;
+import com.valchev.athletiq.mapper.ExerciseMapper;
+import com.valchev.athletiq.mapper.SetMapper;
 import com.valchev.athletiq.repository.ExerciseRepository;
 import com.valchev.athletiq.repository.ExerciseTemplateRepository;
 import jakarta.transaction.Transactional;
@@ -27,7 +27,7 @@ public class ExerciseService {
 
 
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseMapper exerciseMapper, ExerciseSetMapper exerciseSetMapper, ExerciseTemplateRepository exerciseTemplateRepository) {
+    public ExerciseService(ExerciseRepository exerciseRepository, ExerciseMapper exerciseMapper, SetMapper setMapper, ExerciseTemplateRepository exerciseTemplateRepository) {
         this.exerciseRepository = exerciseRepository;
         this.exerciseMapper = exerciseMapper;
         this.exerciseTemplateRepository = exerciseTemplateRepository;

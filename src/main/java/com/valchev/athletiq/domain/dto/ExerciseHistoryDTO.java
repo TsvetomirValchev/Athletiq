@@ -21,6 +21,6 @@ public class ExerciseHistoryDTO {
     private String notes;
 
     @Builder.Default
-    private List<ExerciseSetHistoryDTO> exerciseSetHistories = new ArrayList<>();
+    private List<SetHistoryDTO> exerciseSetHistories = new ArrayList<>();
 
 }

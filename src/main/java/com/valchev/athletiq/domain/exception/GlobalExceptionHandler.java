@@ -18,20 +18,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<HttpErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<HttpErrorResponse> handleResourceNotFoundException(UserFriendlyException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<HttpErrorResponse> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+    public ResponseEntity<HttpErrorResponse> handleAccessDeniedException(UserFriendlyException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(InvalidInputException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<HttpErrorResponse> handleInvalidInputException(InvalidInputException ex, HttpServletRequest request) {
-        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<HttpErrorResponse> handleTokenExpiredException(TokenExpiredException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<HttpErrorResponse> handleInvalidTokenException(InvalidTokenException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
     }
 
     @ExceptionHandler(UserFriendlyException.class)

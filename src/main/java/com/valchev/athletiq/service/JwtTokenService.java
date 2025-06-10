@@ -1,6 +1,6 @@
-package com.valchev.athletiq.security;
+package com.valchev.athletiq.service;
 
-import com.valchev.athletiq.service.CustomUserDetailsService;
+import com.valchev.athletiq.security.AthletiqUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,6 @@ public class JwtTokenService {
         return generateToken(authentication, 3, ChronoUnit.MINUTES);
     }
 
-    // Flexible token generation with custom duration
     public String generateToken(Authentication authentication, long amount, ChronoUnit unit) {
         Instant now = Instant.now();
 

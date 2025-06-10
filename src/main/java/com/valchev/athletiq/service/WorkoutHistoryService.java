@@ -1,16 +1,12 @@
 package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.dto.WorkoutHistoryDTO;
-import com.valchev.athletiq.domain.dto.WorkoutStats;
+import com.valchev.athletiq.domain.dto.WorkoutStatsDTO;
 import com.valchev.athletiq.domain.entity.ExerciseHistory;
-import com.valchev.athletiq.domain.entity.ExerciseSetHistory;
+import com.valchev.athletiq.domain.entity.SetHistory;
 import com.valchev.athletiq.domain.entity.WorkoutHistory;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
-import com.valchev.athletiq.domain.mapper.ExerciseHistoryMapper;
-import com.valchev.athletiq.domain.mapper.SetHistoryMapper;
-import com.valchev.athletiq.domain.mapper.WorkoutHistoryMapper;
-import com.valchev.athletiq.repository.ExerciseHistoryRepository;
-import com.valchev.athletiq.repository.SetHistoryRepository;
+import com.valchev.athletiq.mapper.WorkoutHistoryMapper;
 import com.valchev.athletiq.repository.WorkoutHistoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -28,25 +24,13 @@ import java.util.stream.Collectors;
 public class WorkoutHistoryService {
 
     private final WorkoutHistoryRepository workoutHistoryRepository;
-    private final SetHistoryRepository setHistoryRepository;
-    private final ExerciseHistoryRepository exerciseHistoryRepository;
-    private final ExerciseHistoryMapper exerciseHistoryMapper;
     private final WorkoutHistoryMapper workoutHistoryMapper;
-    private final SetHistoryMapper setHistoryMapper;
 
     @Autowired
     public WorkoutHistoryService(WorkoutHistoryRepository workoutHistoryRepository,
-                                 SetHistoryRepository setHistoryRepository,
-                                 ExerciseHistoryRepository exerciseHistoryRepository,
-                                 ExerciseHistoryMapper exerciseHistoryMapper,
-                                 WorkoutHistoryMapper workoutHistoryMapper,
-                                 SetHistoryMapper setHistoryMapper) {
+                                 WorkoutHistoryMapper workoutHistoryMapper) {
         this.workoutHistoryRepository = workoutHistoryRepository;
-        this.setHistoryRepository = setHistoryRepository;
-        this.exerciseHistoryRepository = exerciseHistoryRepository;
-        this.exerciseHistoryMapper = exerciseHistoryMapper;
         this.workoutHistoryMapper = workoutHistoryMapper;
-        this.setHistoryMapper = setHistoryMapper;
     }
 
     @Transactional
@@ -57,7 +41,7 @@ public class WorkoutHistoryService {
             for (ExerciseHistory exercise : workoutHistory.getExerciseHistories()) {
                 exercise.setWorkoutHistory(workoutHistory);
                 if (exercise.getExerciseSetHistories() != null) {
-                    for (ExerciseSetHistory set : exercise.getExerciseSetHistories()) {
+                    for (SetHistory set : exercise.getExerciseSetHistories()) {
                         set.setExerciseHistory(exercise);
                     }
                 }
@@ -78,11 +62,9 @@ public class WorkoutHistoryService {
                 .collect(Collectors.toList());
     }
 
-    public WorkoutStats calculateWorkoutStats(UUID userId) {
-        // Get all workouts for this user
+    public WorkoutStatsDTO calculateWorkoutStats(UUID userId) {
         List<WorkoutHistory> workouts = workoutHistoryRepository.findAllByUserId(userId);
 
-        // Calculate total workouts
         int totalWorkouts = workouts.size();
 
         int hoursActive = calculateTotalHours(workouts);
@@ -90,7 +72,7 @@ public class WorkoutHistoryService {
         int uniqueDays = workoutHistoryRepository.countDistinctWorkoutDaysByUserId(userId);
 
 
-        return WorkoutStats.builder()
+        return WorkoutStatsDTO.builder()
                 .totalWorkouts(totalWorkouts)
                 .uniqueDays(uniqueDays)
                 .hoursActive(hoursActive)
@@ -104,7 +86,6 @@ public class WorkoutHistoryService {
                 .filter(Objects::nonNull)
                 .reduce(Duration.ZERO, Duration::plus);
 
-        // Convert to hours and round to the nearest whole number
         long totalSeconds = totalDuration.getSeconds();
         return (int) Math.round(totalSeconds / 3600.0);
     }

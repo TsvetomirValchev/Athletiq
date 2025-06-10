@@ -4,7 +4,7 @@ import com.valchev.athletiq.domain.dto.WorkoutDTO;
 import com.valchev.athletiq.domain.entity.Workout;
 import com.valchev.athletiq.domain.exception.AccessDeniedException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
-import com.valchev.athletiq.domain.mapper.WorkoutMapper;
+import com.valchev.athletiq.mapper.WorkoutMapper;
 import com.valchev.athletiq.repository.WorkoutRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

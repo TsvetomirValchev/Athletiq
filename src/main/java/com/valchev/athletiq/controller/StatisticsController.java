@@ -1,10 +1,10 @@
 package com.valchev.athletiq.controller;
 
 
-import com.valchev.athletiq.domain.dto.CalendarDayData;
-import com.valchev.athletiq.domain.dto.MuscleGroupStats;
-import com.valchev.athletiq.domain.dto.WorkoutStats;
-import com.valchev.athletiq.domain.dto.WorkoutStreakData;
+import com.valchev.athletiq.domain.dto.CalendarDataDTO;
+import com.valchev.athletiq.domain.dto.MuscleGroupDTO;
+import com.valchev.athletiq.domain.dto.WorkoutStatsDTO;
+import com.valchev.athletiq.domain.dto.WorkoutStreakDTO;
 import com.valchev.athletiq.service.StatisticsService;
 import com.valchev.athletiq.service.WorkoutHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +30,18 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @GetMapping("/profile-page-stats")
-    public ResponseEntity<WorkoutStats> getUserWorkoutStats(@RequestParam UUID userId) {
-        WorkoutStats stats = workoutHistoryService.calculateWorkoutStats(userId);
+    public ResponseEntity<WorkoutStatsDTO> getUserWorkoutStats(@RequestParam UUID userId) {
+        WorkoutStatsDTO stats = workoutHistoryService.calculateWorkoutStats(userId);
         return ResponseEntity.ok(stats);
     }
 
     @GetMapping("/streaks")
-    public ResponseEntity<WorkoutStreakData> getWorkoutStreaks(@RequestParam UUID userId) {
+    public ResponseEntity<WorkoutStreakDTO> getWorkoutStreaks(@RequestParam UUID userId) {
         return ResponseEntity.ok(statisticsService.getWorkoutStreaks(userId));
     }
 
     @GetMapping("/calendar/{year}/{month}")
-    public ResponseEntity<List<CalendarDayData>> getCalendarData(
+    public ResponseEntity<List<CalendarDataDTO>> getCalendarData(
             @PathVariable int year,
             @PathVariable int month,
             @RequestParam UUID userId) {
@@ -49,7 +49,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/muscle-groups")
-    public ResponseEntity<List<MuscleGroupStats>> getMuscleGroupDistribution(@RequestParam UUID userId) {
+    public ResponseEntity<List<MuscleGroupDTO>> getMuscleGroupDistribution(@RequestParam UUID userId) {
         return ResponseEntity.ok(statisticsService.getMuscleGroupDistribution(userId));
     }
 

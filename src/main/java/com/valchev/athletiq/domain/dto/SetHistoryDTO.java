@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExerciseSetHistoryDTO {
+public class SetHistoryDTO {
 
     private UUID exerciseSetHistoryId;
     private int orderPosition;

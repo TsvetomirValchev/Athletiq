@@ -1,7 +1,6 @@
-package com.valchev.athletiq.domain.mapper;
+package com.valchev.athletiq.mapper;
 
 import com.valchev.athletiq.domain.dto.ExerciseDTO;
-import com.valchev.athletiq.domain.dto.ExerciseSetDTO;
 import com.valchev.athletiq.domain.entity.Exercise;
 import com.valchev.athletiq.domain.entity.ExerciseSet;
 import org.mapstruct.*;
@@ -9,7 +8,7 @@ import org.mapstruct.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {ExerciseSetMapper.class})
+@Mapper(componentModel = "spring", uses = {SetMapper.class})
 public interface ExerciseMapper {
 
     @Mapping(source = "workout.workoutId", target = "workoutId")

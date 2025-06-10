@@ -24,9 +24,9 @@ spring:
             enable: true
 app:
   web:
-    reset-url: http://localhost:8100/reset-password
-    mobile:
-      reset-scheme: athletiq
+      reset-url: http://localhost:8100/reset-password
+  mobile:
+    reset-scheme: athletiq
 
 
 # Server Port

@@ -1,12 +1,8 @@
 package com.valchev.athletiq.controller;
 
-import com.valchev.athletiq.domain.dto.ExerciseHistoryDTO;
 import com.valchev.athletiq.domain.dto.WorkoutHistoryDTO;
-import com.valchev.athletiq.domain.entity.ExerciseHistory;
 import com.valchev.athletiq.domain.entity.WorkoutHistory;
-import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
-import com.valchev.athletiq.domain.mapper.ExerciseHistoryMapper;
-import com.valchev.athletiq.domain.mapper.WorkoutHistoryMapper;
+import com.valchev.athletiq.mapper.WorkoutHistoryMapper;
 import com.valchev.athletiq.service.WorkoutHistoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

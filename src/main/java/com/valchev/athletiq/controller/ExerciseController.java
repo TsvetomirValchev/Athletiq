@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequestMapping("/workouts/{workoutId}/exercises")
 @RequiredArgsConstructor
 @Slf4j
-public class WorkoutExerciseController {
+public class ExerciseController {
 
     private final WorkoutService workoutService;
     private final ExerciseService exerciseService;

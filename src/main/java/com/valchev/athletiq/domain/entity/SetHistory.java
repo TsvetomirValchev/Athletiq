@@ -20,7 +20,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExerciseSetHistory {
+public class SetHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID exerciseSetHistoryId;

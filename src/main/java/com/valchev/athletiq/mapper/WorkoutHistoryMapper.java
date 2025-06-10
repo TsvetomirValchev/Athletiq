@@ -1,11 +1,9 @@
-package com.valchev.athletiq.domain.mapper;
+package com.valchev.athletiq.mapper;
 
 import com.valchev.athletiq.domain.dto.WorkoutHistoryDTO;
 import com.valchev.athletiq.domain.entity.WorkoutHistory;
-import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
 import java.util.List;
 
@@ -20,12 +18,4 @@ public interface WorkoutHistoryMapper {
     WorkoutHistoryDTO toDTO(WorkoutHistory entity);
 
     List<WorkoutHistoryDTO> toDTOs(List<WorkoutHistory> entities);
-
-    @Named("toSummaryDTO")
-    @Mapping(source = "workoutHistoryId", target = "workoutHistoryId")
-    @Mapping(target = "exerciseHistories", ignore = true)
-    WorkoutHistoryDTO toSummaryDTO(WorkoutHistory entity);
-
-    @IterableMapping(qualifiedByName = "toSummaryDTO")
-    List<WorkoutHistoryDTO> toSummaryDTOs(List<WorkoutHistory> entities);
 }

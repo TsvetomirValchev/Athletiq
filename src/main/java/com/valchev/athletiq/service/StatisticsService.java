@@ -1,8 +1,8 @@
 package com.valchev.athletiq.service;
 
-import com.valchev.athletiq.domain.dto.CalendarDayData;
-import com.valchev.athletiq.domain.dto.MuscleGroupStats;
-import com.valchev.athletiq.domain.dto.WorkoutStreakData;
+import com.valchev.athletiq.domain.dto.CalendarDataDTO;
+import com.valchev.athletiq.domain.dto.MuscleGroupDTO;
+import com.valchev.athletiq.domain.dto.WorkoutStreakDTO;
 import com.valchev.athletiq.domain.entity.ExerciseHistory;
 import com.valchev.athletiq.domain.entity.WorkoutHistory;
 import com.valchev.athletiq.repository.ExerciseTemplateRepository;
@@ -27,11 +27,11 @@ public class StatisticsService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final int MAX_STREAK_BREAK_DAYS = 6;
 
-    public WorkoutStreakData getWorkoutStreaks(UUID userId) {
+    public WorkoutStreakDTO getWorkoutStreaks(UUID userId) {
         List<WorkoutHistory> workouts = workoutHistoryRepository.findByUserIdOrderByDateAsc(userId);
 
         if (workouts.isEmpty()) {
-            return new WorkoutStreakData(0, 0, null, Collections.emptyList());
+            return new WorkoutStreakDTO(0, 0, null, Collections.emptyList());
         }
 
         // Extract and sort all workout dates
@@ -56,7 +56,7 @@ public class StatisticsService {
         String lastWorkoutDate = workouts.isEmpty() ? null :
                 workoutDates.get(workoutDates.size() - 1).format(DATE_FORMATTER);
 
-        return new WorkoutStreakData(currentStreak, longestStreak, lastWorkoutDate, workoutDateStrings);
+        return new WorkoutStreakDTO(currentStreak, longestStreak, lastWorkoutDate, workoutDateStrings);
     }
 
     private int calculateCurrentStreak(List<LocalDate> workoutDates) {
@@ -108,7 +108,7 @@ public class StatisticsService {
         return Math.max(longestStreak, currentStreak);
     }
 
-    public List<CalendarDayData> getCalendarData(int year, int month, UUID userId) {
+    public List<CalendarDataDTO> getCalendarData(int year, int month, UUID userId) {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
@@ -121,23 +121,23 @@ public class StatisticsService {
 
         Set<LocalDate> workoutDateSet = new HashSet<>(workoutDates);
 
-        List<CalendarDayData> calendarData = new ArrayList<>();
+        List<CalendarDataDTO> calendarDatumDtos = new ArrayList<>();
 
         // Create data for each day of the month
         for (int day = 1; day <= endDate.getDayOfMonth(); day++) {
             LocalDate date = LocalDate.of(year, month, day);
             boolean hasWorkout = workoutDateSet.contains(date);
 
-            calendarData.add(CalendarDayData.builder()
+            calendarDatumDtos.add(CalendarDataDTO.builder()
                     .date(date)
                     .hasWorkout(hasWorkout)
                     .build());
         }
 
-        return calendarData;
+        return calendarDatumDtos;
     }
 
-    public List<MuscleGroupStats> getMuscleGroupDistribution(UUID userId) {
+    public List<MuscleGroupDTO> getMuscleGroupDistribution(UUID userId) {
         // Get all workouts for the user
         List<WorkoutHistory> workouts = workoutHistoryRepository.findAllByUserId(userId);
 
@@ -157,8 +157,8 @@ public class StatisticsService {
         }
 
         return muscleGroupCounts.entrySet().stream()
-                .map(entry -> new MuscleGroupStats(entry.getKey(), entry.getValue()))
-                .sorted(Comparator.comparingInt(MuscleGroupStats::getWorkoutCount).reversed())
+                .map(entry -> new MuscleGroupDTO(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparingInt(MuscleGroupDTO::getWorkoutCount).reversed())
                 .collect(Collectors.toList());
     }
 }

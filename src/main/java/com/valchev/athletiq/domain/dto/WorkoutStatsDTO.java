@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class WorkoutStats {
+public class WorkoutStatsDTO {
     private int totalWorkouts;
     private int uniqueDays;
     private int hoursActive;

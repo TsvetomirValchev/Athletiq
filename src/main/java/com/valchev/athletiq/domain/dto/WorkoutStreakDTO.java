@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutStreakData {
+public class WorkoutStreakDTO {
     private int currentStreak;
     private int longestStreak;
     private String lastWorkoutDate;

@@ -2,7 +2,7 @@ package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.dto.ExerciseTemplateDTO;
 import com.valchev.athletiq.domain.entity.ExerciseTemplate;
-import com.valchev.athletiq.domain.mapper.ExerciseTemplateMapper;
+import com.valchev.athletiq.mapper.ExerciseTemplateMapper;
 import com.valchev.athletiq.repository.ExerciseTemplateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -2,9 +2,8 @@ package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.dto.UserDTO;
 import com.valchev.athletiq.domain.entity.User;
-import com.valchev.athletiq.domain.exception.NoSuchUserException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
-import com.valchev.athletiq.domain.mapper.UserMapper;
+import com.valchev.athletiq.mapper.UserMapper;
 import com.valchev.athletiq.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,7 @@ public class UserService {
     public String findUsernameByEmail(String email) {
         return findByEmail(email)
                 .map(UserDTO::getUsername)
-                .orElseThrow(() -> new NoSuchUserException("No user found with email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("No user found with email: " + email));
     }
 }
 

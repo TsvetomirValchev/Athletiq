@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 @Component
-public class AthletiqJwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class PasswordResetToken {
+public class PasswordResetTokenDTO {
     private UUID userId;
     private LocalDateTime expiration;
 }

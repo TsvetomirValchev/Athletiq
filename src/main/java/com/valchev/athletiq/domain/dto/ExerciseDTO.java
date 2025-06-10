@@ -15,7 +15,7 @@ public class ExerciseDTO {
     private UUID exerciseTemplateId;
     private String name;
     private String notes;
-    private List<ExerciseSetDTO> sets;
+    private List<SetDTO> sets;
     private int orderPosition;
 
 }

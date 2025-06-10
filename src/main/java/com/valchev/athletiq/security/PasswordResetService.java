@@ -1,13 +1,11 @@
 package com.valchev.athletiq.security;
 
-import com.valchev.athletiq.domain.dto.PasswordResetToken;
+import com.valchev.athletiq.domain.dto.PasswordResetTokenDTO;
 import com.valchev.athletiq.domain.dto.UserDTO;
 import com.valchev.athletiq.domain.exception.InvalidTokenException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.domain.exception.TokenExpiredException;
 import com.valchev.athletiq.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PasswordResetService {
 
     private final UserService userService;
-    private final Map<String, PasswordResetToken> tokens = new ConcurrentHashMap<>();
+    private final Map<String, PasswordResetTokenDTO> tokens = new ConcurrentHashMap<>();
 
     @Autowired
     public PasswordResetService(UserService userService) {
@@ -31,7 +29,7 @@ public class PasswordResetService {
         String token = UUID.randomUUID().toString();
         LocalDateTime expiration = LocalDateTime.now().plusHours(1);
 
-        tokens.put(token, new PasswordResetToken(user.getUserId(), expiration));
+        tokens.put(token, new PasswordResetTokenDTO(user.getUserId(), expiration));
         return token;
     }
 
@@ -40,7 +38,7 @@ public class PasswordResetService {
             throw new InvalidTokenException("Token cannot be empty");
         }
 
-        PasswordResetToken resetToken = tokens.get(token);
+        PasswordResetTokenDTO resetToken = tokens.get(token);
         if (resetToken == null) {
             throw new InvalidTokenException("Invalid password reset token");
         }

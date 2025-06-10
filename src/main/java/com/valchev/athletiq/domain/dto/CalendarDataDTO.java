@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MuscleGroupStats {
-    private String muscleGroup;
-    private int workoutCount;
+public class CalendarDataDTO {
+    private LocalDate date;
+    private boolean hasWorkout;
 }
