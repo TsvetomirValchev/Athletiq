@@ -1,6 +1,7 @@
 package com.valchev.athletiq.domain.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +29,21 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(TokenExpiredException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<HttpErrorResponse> handleTokenExpiredException(TokenExpiredException ex, HttpServletRequest request) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<HttpErrorResponse> handleDataIntegrityViolationException() {
+        String message = "A record with the same unique field already exists.";
+        HttpErrorResponse errorResponse = HttpErrorResponse.builder()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(message)
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
+    @ExceptionHandler({TokenExpiredException.class, InvalidTokenException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<HttpErrorResponse> handleInvalidTokenException(InvalidTokenException ex, HttpServletRequest request) {
+    public ResponseEntity<HttpErrorResponse> handleTokenExpiredException(UserFriendlyException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
     }
 
