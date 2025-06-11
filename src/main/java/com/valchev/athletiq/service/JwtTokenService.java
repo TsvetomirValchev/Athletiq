@@ -21,11 +21,11 @@ public class JwtTokenService {
     private final CustomUserDetailsService userDetailsService;
 
     public String generateToken(Authentication authentication) {
-        return generateToken(authentication, 1, ChronoUnit.MINUTES);
+        return generateToken(authentication, 1, ChronoUnit.DAYS);
     }
 
     public String generateMobileToken(Authentication authentication) {
-        return generateToken(authentication, 3, ChronoUnit.MINUTES);
+        return generateToken(authentication, 30, ChronoUnit.DAYS);
     }
 
     public String generateToken(Authentication authentication, long amount, ChronoUnit unit) {

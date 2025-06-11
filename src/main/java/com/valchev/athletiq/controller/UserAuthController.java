@@ -2,6 +2,7 @@ package com.valchev.athletiq.controller;
 
 import com.valchev.athletiq.domain.dto.ForgottenPasswordDTO;
 import com.valchev.athletiq.domain.dto.LoginRequestDTO;
+import com.valchev.athletiq.domain.dto.LoginResponseDTO;
 import com.valchev.athletiq.domain.dto.RegistrationResponseDTO;
 import com.valchev.athletiq.domain.dto.ResetPasswordDTO;
 import com.valchev.athletiq.domain.dto.UserDTO;
@@ -55,7 +56,7 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO request,
             @RequestHeader(value = "X-Client-Type", defaultValue = "web") String clientType) {
         String username = resolveUsername(request.getUsernameOrEmail());
@@ -65,7 +66,7 @@ public class UserAuthController {
 
         String jwt = generateToken(authentication, clientType);
 
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(new LoginResponseDTO(jwt));
     }
 
     private String resolveUsername(String usernameOrEmail) {
@@ -99,7 +100,7 @@ public class UserAuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request,
+    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request,
                                             @RequestHeader(name = "X-Client-Type", defaultValue = "web") String clientType){
         String email = request.getEmail();
 
@@ -108,11 +109,11 @@ public class UserAuthController {
             emailService.sendPasswordResetEmail(user.getEmail(), token, clientType);
         });
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordDTO request) {
+    public ResponseEntity<UserDTO> resetPassword(@RequestBody @Valid ResetPasswordDTO request) {
         UserDTO user = passwordResetService.validateToken(request.getToken());
         String encodedPassword = passwordEncoder.encode(request.getNewPassword());
         userService.updatePassword(user.getUserId(), encodedPassword);

@@ -74,7 +74,7 @@ public class SecurityConfig {
                 "http://localhost:8100",
                 "capacitor://*",
                 "http://localhost",
-                "athletiq://*"
+                "https://localhost"
         ));
 
         configuration.setAllowedMethods(List.of("*"));

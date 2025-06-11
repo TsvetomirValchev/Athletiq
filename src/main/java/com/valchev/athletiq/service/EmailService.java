@@ -45,11 +45,7 @@ public class EmailService {
         }
 
     private SimpleMailMessage createSimpleMailMessage(String to, String resetUrl) {
-        String htmlContent =
-                "<html><body>" +
-                        "<p>Reset your password by clicking below:</p>" +
-                        "<a href='" + resetUrl + "' style='color: blue;'>Click here to reset password</a>" +
-                        "</body></html>";
+        String htmlContent = "Reset your password by clicking the following link: " + resetUrl;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("athletiq50@gmail.com");
