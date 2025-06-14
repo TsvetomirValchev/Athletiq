@@ -43,8 +43,4 @@ public class Exercise {
     @Column(nullable = false)
     private int orderPosition;
 
-    public void removeSet(ExerciseSet set) {
-        sets.remove(set);
-    }
-
 }

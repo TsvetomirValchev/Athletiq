@@ -49,10 +49,10 @@ public class ExerciseTemplateLoader implements ApplicationRunner {
         ));
 
         templates.add(createTemplate(
-                "Dumbbell Flyes",
+                "Dumbell Flyes",
                 "An isolation exercise for the chest. Lie on a bench with dumbbells extended above your chest, then open your arms wide while keeping a slight bend in your elbows.",
                 Arrays.asList("Chest", "Shoulders", "Arms"),
-                "/images/exercises/dumbbell-flyes.jpg"
+                "/images/exercises/dumbell-fly.jpg"
         ));
 
 // Back exercises
