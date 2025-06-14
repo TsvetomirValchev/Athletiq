@@ -55,7 +55,6 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password").permitAll()
-                        .requestMatchers("/workouts/**", "/active-workouts/**", "/exercise-templates/**", "/statistics/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -86,21 +85,13 @@ public class SecurityConfig {
         return source;
     }
 
-    /**
-     * Configures the JWT decoder.
-     *
-     * @return the configured JwtDecoder
-     */
+
     @Bean
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
     }
 
-    /**
-     * Configures the JWT encoder.
-     *
-     * @return the configured JwtEncoder
-     */
+
     @Bean
     JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
@@ -108,21 +99,11 @@ public class SecurityConfig {
         return new NimbusJwtEncoder(jwks);
     }
 
-    /**
-     * Configures the UserDetailsService.
-     *
-     * @return the configured UserDetailsService
-     */
     @Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
     }
 
-    /**
-     * Configures the authentication provider.
-     *
-     * @return the configured AuthenticationProvider
-     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -131,23 +112,12 @@ public class SecurityConfig {
         return authenticationProvider;
     }
 
-    /**
-     * Configures the authentication manager.
-     *
-     * @param config the AuthenticationConfiguration object to configure
-     * @return the configured AuthenticationManager
-     * @throws Exception if an error occurs during configuration
-     */
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * Configures the BCrypt password encoder.
-     *
-     * @return the configured BCryptPasswordEncoder
-     */
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();

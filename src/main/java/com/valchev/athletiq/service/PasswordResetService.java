@@ -1,11 +1,10 @@
-package com.valchev.athletiq.security;
+package com.valchev.athletiq.service;
 
 import com.valchev.athletiq.domain.dto.PasswordResetTokenDTO;
 import com.valchev.athletiq.domain.dto.UserDTO;
 import com.valchev.athletiq.domain.exception.InvalidTokenException;
 import com.valchev.athletiq.domain.exception.ResourceNotFoundException;
 import com.valchev.athletiq.domain.exception.TokenExpiredException;
-import com.valchev.athletiq.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class PasswordResetService {
 
     public String createToken(UserDTO user) {
         String token = UUID.randomUUID().toString();
-        LocalDateTime expiration = LocalDateTime.now().plusHours(1);
+        LocalDateTime expiration = LocalDateTime.now().plusMinutes(10);
 
         tokens.put(token, new PasswordResetTokenDTO(user.getUserId(), expiration));
         return token;

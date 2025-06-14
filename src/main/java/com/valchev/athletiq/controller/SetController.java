@@ -80,7 +80,7 @@ public class SetController {
         log.info("For in update set exercise ID: {}", exerciseId);
         log.info("setDto {} ", setDTO);
         setDTO.setExerciseId(exerciseId);
-        setService.updateExerciseSet(exerciseSetId, setDTO);
-        return ResponseEntity.noContent().build();
+        SetDTO updatedSet =setService.updateExerciseSet(exerciseSetId, setDTO);
+        return ResponseEntity.ok(updatedSet);
     }
 }

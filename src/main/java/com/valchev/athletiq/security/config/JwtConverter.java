@@ -29,11 +29,7 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         String userIdStr = jwt.getClaimAsString("userId");
         UUID userId = null;
         if (userIdStr != null) {
-            try {
-                userId = UUID.fromString(userIdStr);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Warning: Invalid userId format in JWT: " + userIdStr);
-            }
+            userId = UUID.fromString(userIdStr);
         }
         String email = jwt.getClaimAsString("email");
 

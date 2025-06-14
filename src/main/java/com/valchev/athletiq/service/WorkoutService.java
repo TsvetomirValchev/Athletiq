@@ -70,30 +70,4 @@ public class WorkoutService {
             throw new AccessDeniedException("You don't have permission to access this workout");
         }
     }
-
-    public WorkoutDTO removeSetFromExercise(UUID workoutId, UUID exerciseId, Integer orderPosition) {
-        Workout workout = retrieveWorkout(workoutId);
-
-        checkIfExerciseExistsInWorkout(exerciseId, workout);
-
-        exerciseService.removeSetByOrderPosition(exerciseId, orderPosition);
-
-        Workout updatedWorkout = retrieveWorkout(workoutId);
-
-        return workoutMapper.toDTO(updatedWorkout);
-    }
-
-    private Workout retrieveWorkout(UUID workoutId) {
-        return workoutRepository.findById(workoutId)
-                .orElseThrow(() -> new ResourceNotFoundException("Active workout not found"));
-    }
-
-    private void checkIfExerciseExistsInWorkout(UUID exerciseId, Workout workout) {
-        boolean exerciseExists = workout.getExercises().stream()
-                .anyMatch(e -> e.getExerciseId().equals(exerciseId));
-
-        if (!exerciseExists) {
-            throw new ResourceNotFoundException("Exercise not found in workout");
-        }
-    }
 }

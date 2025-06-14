@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-@Entity(name = "atlethiq_user")
+@Entity(name = "users")
 @Slf4j
 @Data
 public class User {

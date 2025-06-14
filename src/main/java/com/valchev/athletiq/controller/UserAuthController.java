@@ -8,7 +8,7 @@ import com.valchev.athletiq.domain.dto.ResetPasswordDTO;
 import com.valchev.athletiq.domain.dto.UserDTO;
 import com.valchev.athletiq.domain.exception.AccessDeniedException;
 import com.valchev.athletiq.service.JwtTokenService;
-import com.valchev.athletiq.security.PasswordResetService;
+import com.valchev.athletiq.service.PasswordResetService;
 import com.valchev.athletiq.service.EmailService;
 import com.valchev.athletiq.service.UserService;
 import jakarta.validation.Valid;
@@ -100,7 +100,7 @@ public class UserAuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request,
+    public ResponseEntity<ForgottenPasswordDTO> forgotPassword(@RequestBody @Valid ForgottenPasswordDTO request,
                                             @RequestHeader(name = "X-Client-Type", defaultValue = "web") String clientType){
         String email = request.getEmail();
 
@@ -109,7 +109,7 @@ public class UserAuthController {
             emailService.sendPasswordResetEmail(user.getEmail(), token, clientType);
         });
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(request);
     }
 
     @PatchMapping("/reset-password")

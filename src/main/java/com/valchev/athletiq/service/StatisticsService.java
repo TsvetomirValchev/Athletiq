@@ -34,25 +34,20 @@ public class StatisticsService {
             return new WorkoutStreakDTO(0, 0, null, Collections.emptyList());
         }
 
-        // Extract and sort all workout dates
         List<LocalDate> workoutDates = workouts.stream()
                 .map(WorkoutHistory::getDate)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
 
-        // Convert to string format for frontend
         List<String> workoutDateStrings = workoutDates.stream()
                 .map(date -> date.format(DATE_FORMATTER))
                 .collect(Collectors.toList());
 
-        // Calculate current streak
         int currentStreak = calculateCurrentStreak(workoutDates);
 
-        // Calculate longest streak
         int longestStreak = calculateLongestStreak(workoutDates);
 
-        // Get the last workout date
         String lastWorkoutDate = workouts.isEmpty() ? null :
                 workoutDates.get(workoutDates.size() - 1).format(DATE_FORMATTER);
 
@@ -123,7 +118,6 @@ public class StatisticsService {
 
         List<CalendarDataDTO> calendarDatumDtos = new ArrayList<>();
 
-        // Create data for each day of the month
         for (int day = 1; day <= endDate.getDayOfMonth(); day++) {
             LocalDate date = LocalDate.of(year, month, day);
             boolean hasWorkout = workoutDateSet.contains(date);
@@ -138,10 +132,8 @@ public class StatisticsService {
     }
 
     public List<MuscleGroupDTO> getMuscleGroupDistribution(UUID userId) {
-        // Get all workouts for the user
         List<WorkoutHistory> workouts = workoutHistoryRepository.findAllByUserId(userId);
 
-        // Count occurrences of each muscle group
         Map<String, Integer> muscleGroupCounts = new HashMap<>();
 
         for (WorkoutHistory workout : workouts) {
@@ -149,7 +141,6 @@ public class StatisticsService {
                 String exerciseName = exerciseHistory.getExerciseName();
                 List<String> muscleGroups = exerciseTemplateRepository.findMuscleGroupsByExerciseName(exerciseName);
 
-                // Increment counter for each muscle group
                 for (String muscleGroup : muscleGroups) {
                     muscleGroupCounts.merge(muscleGroup, 1, Integer::sum);
                 }

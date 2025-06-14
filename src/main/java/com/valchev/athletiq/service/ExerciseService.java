@@ -46,25 +46,6 @@ public class ExerciseService {
         exerciseRepository.deleteById(exerciseId);
     }
 
-    public void removeSetByOrderPosition(UUID exerciseId, Integer orderPosition) {
-        Exercise exercise = exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
-
-        ExerciseSet setToRemove = exercise.getSets().stream()
-                .filter(s -> s.getOrderPosition().equals(orderPosition))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Set not found"));
-
-        exercise.removeSet(setToRemove);
-
-        int newPosition = 1;
-        for (ExerciseSet set : exercise.getSets()) {
-            set.setOrderPosition(newPosition++);
-        }
-
-        exerciseRepository.save(exercise);
-    }
-
     public List<Exercise> getExercisesByIds(List<UUID> exerciseIds) {
         return exerciseIds.stream()
                 .map(exerciseRepository::findById)
